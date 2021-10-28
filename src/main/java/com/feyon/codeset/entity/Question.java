@@ -14,5 +14,5 @@ public class Question {
 
     private String title;
 
-    private Integer level;
+    private Integer difficulty;
 }

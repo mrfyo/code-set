@@ -5,13 +5,13 @@
         <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
         <result jdbcType="INTEGER" column="question_number" javaType="integer" property="number" />
         <result jdbcType="VARCHAR" column="title" javaType="string" property="title"/>
-        <result jdbcType="INTEGER" column="level" javaType="integer" property="level"/>
+        <result jdbcType="INTEGER" column="difficulty" javaType="integer" property="difficulty"/>
     </resultMap>
 
 
     <insert id="insert" parameterType="com.feyon.codeset.entity.Question" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into `question`(question_number, title, level)
-        VALUES (#{number}, #{title}, #{level});
+        insert into `question`(question_number, title, difficulty)
+        VALUES (#{number}, #{title}, #{difficulty});
     </insert>
 
     <delete id="deleteById" parameterType="integer">
@@ -29,8 +29,8 @@
         <if test="title != null">
             title = #{title},
         </if>
-        <if test="level != null">
-            level = #{level}
+        <if test="difficulty != null">
+            difficulty = #{difficulty}
         </if>
         where id = #{id};
     </update>

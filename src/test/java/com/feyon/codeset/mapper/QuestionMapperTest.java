@@ -22,16 +22,15 @@ class QuestionMapperTest {
         Question question = new Question();
         question.setNumber(8);
         question.setTitle("符串转换整数");
-        question.setLevel(2);
+        question.setDifficulty(2);
         assertEquals(1, mapper.insert(question));
-        assertEquals(13, question.getId());
     }
 
     @Test
     void update() {
         Question question = mapper.findById(1);
         assertNotNull(question);
-        question.setLevel(3);
+        question.setDifficulty(3);
         assertEquals(1, mapper.update(question));
     }
 
@@ -46,7 +45,7 @@ class QuestionMapperTest {
         assertNotNull(question);
         assertEquals(1, question.getId());
         assertEquals("两数之和", question.getTitle());
-        assertEquals(1, question.getLevel());
+        assertEquals(1, question.getDifficulty());
     }
 
     @Test
