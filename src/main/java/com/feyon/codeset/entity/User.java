@@ -1,6 +1,7 @@
 package com.feyon.codeset.entity;
 
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 /**
  * @author Feng Yong
@@ -13,4 +14,7 @@ public class User {
     private String username;
 
     private String password;
+
+    @Nullable
+    private UserProfile profile;
 }

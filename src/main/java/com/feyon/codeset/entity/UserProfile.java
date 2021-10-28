@@ -7,10 +7,11 @@ import lombok.Data;
  */
 @Data
 public class UserProfile {
-
+    /**
+     * {@link User} id
+     */
     private Integer id;
 
     private String alias;
 
-    private Integer userId;
 }

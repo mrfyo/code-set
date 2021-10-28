@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feyon.codeset.mapper.UserProfileMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.UserProfile">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="VARCHAR" column="alias" javaType="string" property="alias"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.UserProfile">
+        insert into `user_profile`(id, alias)
+        VALUES (#{id}, #{alias});
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `user_profile`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.UserProfile">
+        update `user_profile`
+        set
+        <if test="alias != null">
+            alias = #{alias},
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `user_profile`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `user_profile`;
+    </select>
+</mapper>
