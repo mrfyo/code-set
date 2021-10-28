@@ -1,5 +1,6 @@
 package com.feyon.codeset.query;
 
+import com.feyon.codeset.common.Pageable;
 import lombok.Data;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
  * @author Feng Yong
  */
 @Data
-public class QuestionQuery {
+public class QuestionQuery implements Pageable {
     /**
      * page of table that start from <b>1</b>
      */
