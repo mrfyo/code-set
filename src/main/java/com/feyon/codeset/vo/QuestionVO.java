@@ -9,16 +9,10 @@ import lombok.Data;
 @Data
 public class QuestionVO {
     /**
-     * the situation that user solve this question.
-     * <p>
-     *     if user has not tried to solve, the status is <b>0</b>
-     * </p>
-     * <p>
-     *     if user has tried but not pass, the status is <b>1</b>
-     * </p>
-     * <p>
-     *     if user has passed, the status is <b>2</b>.
-     * </p>
+     * the situation that user solve this question. <br>
+     * <b>0</b> means that user has not tried to solve. <br>
+     * <b>1</b> means that user has tried but not pass. <br>
+     * <b>2</b> means that user has passed
      */
     private Integer status;
 
@@ -42,7 +36,7 @@ public class QuestionVO {
      * <b>2</b> means middle <br>
      * <b>3</b> means difficult <br>
      */
-    private Integer questionLevel;
+    private Integer questionDifficulty;
 
     /**
      * the number of resolution of this question. <br>
