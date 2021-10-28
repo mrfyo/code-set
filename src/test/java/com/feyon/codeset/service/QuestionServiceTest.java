@@ -22,6 +22,6 @@ class QuestionServiceTest {
         query.setStatus(2);
         query.setPage(1);
         query.setSize(10);
-        questionService.listAll(query).forEach(System.out::println);
+        System.out.println(questionService.listAll(query));;
     }
 }

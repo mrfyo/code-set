@@ -18,4 +18,12 @@ public class Solution {
     private Integer userId;
 
     private LocalDateTime createAt;
+
+    public Solution() {
+    }
+
+    public Solution(Integer questionId, Integer userId) {
+        this.questionId = questionId;
+        this.userId = userId;
+    }
 }

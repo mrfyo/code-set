@@ -47,4 +47,21 @@
         select *
         from `submission`;
     </select>
+
+
+    <select id="countByExample" parameterType="com.feyon.codeset.entity.Submission" resultType="long">
+        select count(*) from `submission`
+        <where>
+            <if test="result != null">
+                and result = #{result}
+            </if>
+            <if test="questionId != null">
+                and question_id = #{questionId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

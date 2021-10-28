@@ -42,11 +42,11 @@ public class QuestionVO {
      * the number of resolution of this question. <br>
      * Note. this number is not belong to current user but all users.
      */
-    private Integer resolutionNum;
+    private Long resolutionNum;
 
     /**
      * the passing rate of this question. <br>
      * Note. this rate is not belong to current user but all users.
      */
-    private Integer passRate;
+    private Double passRate;
 }
