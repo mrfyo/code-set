@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feyon.codeset.mapper.SolutionMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.Solution">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="VARCHAR" column="title" javaType="string" property="title"/>
+        <result jdbcType="INTEGER" column="question_id" javaType="integer" property="questionId"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.Solution" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `solution`(title, question_id)
+        VALUES (#{title}, #{questionId});
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `solution`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.Solution">
+        update `solution`
+        set
+        <if test="title != null">
+            title = #{title},
+        </if>
+        <if test="questionId != null">
+            question_id = #{questionId}
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `solution`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `solution`;
+    </select>
+
+</mapper>
