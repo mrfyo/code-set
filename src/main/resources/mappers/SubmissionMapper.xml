@@ -5,7 +5,7 @@
         <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
         <result jdbcType="TINYINT" column="result" javaType="integer" property="result"/>
         <result jdbcType="INTEGER" column="question_id" javaType="integer" property="questionId"/>
-        <result jdbcType="TIME" column="create_at" javaType="java.time.LocalDateTime" property="createAt"/>
+        <result jdbcType="TIMESTAMP" column="create_at" javaType="java.time.LocalDateTime" property="createAt"/>
     </resultMap>
 
 
