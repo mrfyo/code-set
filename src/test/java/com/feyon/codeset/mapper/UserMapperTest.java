@@ -1,6 +1,6 @@
 package com.feyon.codeset.mapper;
 
-import com.feyon.codeset.entity.Role;
+import com.feyon.codeset.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,30 +12,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Transactional
-class RoleMapperTest {
+class UserMapperTest {
 
     @Autowired
-    private RoleMapper mapper;
+    private UserMapper mapper;
 
     @Test
     void insert() {
-        Role role = new Role();
-        role.setName("vip");
-        role.setLocalName("Vip用户");
-        assertEquals(1, mapper.insert(role));
+        User user = new User();
+        user.setUsername("admin");
+        user.setPassword("secret");
+        assertEquals(1, mapper.insert(user));
     }
 
     @Test
     void update() {
-        var role = mapper.findById(1);
-        assertNotNull(role);
-        role.setLocalName("普通用户");
-        assertEquals(1, mapper.update(role));
+        var user = mapper.findById(1);
+        assertNotNull(user);
+        user.setPassword("admin");
+        assertEquals(1, mapper.update(user));
     }
 
     @Test
     void deleteById() {
-        assertEquals(1, mapper.deleteById(3));
+        assertEquals(1, mapper.deleteById(1));
     }
 
     @Test
@@ -43,13 +43,13 @@ class RoleMapperTest {
         var role = mapper.findById(1);
         assertNotNull(role);
         assertEquals(1, role.getId());
-        assertEquals("admin", role.getName());
-        assertEquals("管理员", role.getLocalName());
+        assertEquals("user", role.getUsername());
+        assertEquals("user", role.getPassword());
     }
 
     @Test
     void findAll() {
-        List<Role> list = mapper.findAll();
+        List<User> list = mapper.findAll();
         assertTrue(list.size() != 0);
         list.forEach(System.out::println);
     }

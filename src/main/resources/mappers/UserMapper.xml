@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feyon.codeset.mapper.UserMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.User">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="VARCHAR" column="username" javaType="string" property="username"/>
+        <result jdbcType="VARCHAR" column="password" javaType="string" property="password"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `user`(username, password)
+        VALUES (#{username}, #{password});
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `user`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.User">
+        update `user`
+        set
+        <if test="username != null">
+            username = #{username},
+        </if>
+        <if test="password != null">
+            password = #{password}
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `user`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `user`;
+    </select>
+</mapper>
