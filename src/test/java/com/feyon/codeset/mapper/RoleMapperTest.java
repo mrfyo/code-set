@@ -1,6 +1,7 @@
 package com.feyon.codeset.mapper;
 
 import com.feyon.codeset.entity.Question;
+import com.feyon.codeset.entity.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,46 +13,44 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Transactional
-class QuestionMapperTest {
+class RoleMapperTest {
 
     @Autowired
-    private QuestionMapper mapper;
+    private RoleMapper mapper;
 
     @Test
     void insert() {
-        Question question = new Question();
-        question.setNumber(8);
-        question.setTitle("符串转换整数");
-        question.setLevel(2);
-        assertEquals(1, mapper.insert(question));
-        assertEquals(13, question.getId());
+        Role role = new Role();
+        role.setName("vip");
+        role.setLocalName("Vip用户");
+        assertEquals(1, mapper.insert(role));
     }
 
     @Test
     void update() {
-        Question question = mapper.findById(1);
-        assertNotNull(question);
-        question.setLevel(3);
-        assertEquals(1, mapper.update(question));
+        var role = mapper.findById(1);
+        assertNotNull(role);
+        role.setLocalName("普通用户");
+        assertEquals(1, mapper.update(role));
     }
 
     @Test
     void deleteById() {
-        assertEquals(1, mapper.deleteById(7));
+        assertEquals(1, mapper.deleteById(3));
     }
 
     @Test
     void findById() {
-        Question question = mapper.findById(1);
-        assertNotNull(question);
-        assertEquals(1, question.getId());
-        assertEquals("两数之和", question.getTitle());
-        assertEquals(1, question.getLevel());
+        var role = mapper.findById(1);
+        assertNotNull(role);
+        assertEquals(1, role.getId());
+        assertEquals("admin", role.getName());
+        assertEquals("管理员", role.getLocalName());
     }
 
     @Test
     void findAll() {
-        List<Question> list = mapper.findAll();
+        List<Role> list = mapper.findAll();
         assertTrue(list.size() != 0);
         list.forEach(System.out::println);
     }

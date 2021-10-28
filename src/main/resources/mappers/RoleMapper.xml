@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="">
-    
+<mapper namespace="com.feyon.codeset.mapper.RoleMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.Role">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="VARCHAR" column="name_en" javaType="string" property="name"/>
+        <result jdbcType="VARCHAR" column="name_cn" javaType="string" property="localName"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.Role" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `role`(name_en, name_cn)
+        VALUES (#{name}, #{localName});
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `role`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.Role">
+        update `role`
+        set
+        <if test="name != null">
+            name_en = #{name},
+        </if>
+        <if test="localName != null">
+            name_cn = #{localName}
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `role`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `role`;
+    </select>
 </mapper>

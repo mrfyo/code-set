@@ -37,7 +37,7 @@ class QuestionMapperTest {
 
     @Test
     void deleteById() {
-        assertEquals(1, mapper.deleteById(7));
+        assertEquals(1, mapper.deleteById(3));
     }
 
     @Test
