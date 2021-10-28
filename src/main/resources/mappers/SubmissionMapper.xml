@@ -5,14 +5,15 @@
         <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
         <result jdbcType="TINYINT" column="result" javaType="integer" property="result"/>
         <result jdbcType="INTEGER" column="question_id" javaType="integer" property="questionId"/>
+        <result jdbcType="INTEGER" column="user_id" javaType="integer" property="userId"/>
         <result jdbcType="TIMESTAMP" column="create_at" javaType="java.time.LocalDateTime" property="createAt"/>
     </resultMap>
 
 
     <insert id="insert" parameterType="com.feyon.codeset.entity.Submission" useGeneratedKeys="true" keyProperty="id"
             keyColumn="id">
-        insert into `submission`(result, question_id, create_at)
-        VALUES (#{result}, #{questionId}, #{createAt});
+        insert into `submission`(result, question_id, user_id, create_at)
+        VALUES (#{result}, #{questionId}, #{userId}, #{createAt});
     </insert>
 
     <delete id="deleteById" parameterType="integer">
@@ -28,7 +29,10 @@
             result = #{result},
         </if>
         <if test="questionId != null">
-            question_id = #{questionId}
+            question_id = #{questionId},
+        </if>
+        <if test="userId != null">
+            user_id = #{userId}
         </if>
         where id = #{id};
     </update>

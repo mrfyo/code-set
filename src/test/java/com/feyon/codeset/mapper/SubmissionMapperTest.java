@@ -24,6 +24,7 @@ class SubmissionMapperTest {
         var submission = new Submission();
         submission.setResult(1);
         submission.setQuestionId(1);
+        submission.setUserId(1);
         submission.setCreateAt(LocalDateTime.now());
         assertEquals(1, mapper.insert(submission));
     }

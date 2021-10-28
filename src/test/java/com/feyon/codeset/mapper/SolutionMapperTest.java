@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,6 +24,8 @@ class SolutionMapperTest {
         Solution solution = new Solution();
         solution.setTitle("暴力解法--两数之和");
         solution.setQuestionId(1);
+        solution.setUserId(1);
+        solution.setCreateAt(LocalDateTime.now());
         assertEquals(1, mapper.insert(solution));
     }
 
@@ -45,6 +48,8 @@ class SolutionMapperTest {
         assertNotNull(solution);
         assertEquals(1, solution.getId());
         assertEquals("暴力解法--两数之和", solution.getTitle());
+        assertNotNull(solution.getCreateAt());
+        assertEquals(2021, solution.getCreateAt().getYear());
     }
 
     @Test

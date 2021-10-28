@@ -16,6 +16,8 @@ public class Submission {
 
     private Integer questionId;
 
+    private Integer userId;
+
     private LocalDateTime createAt;
 
 }
