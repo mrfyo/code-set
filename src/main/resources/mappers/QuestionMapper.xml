@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feyon.codeset.mapper.QuestionMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.Question">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="INTEGER" column="question_number" javaType="integer" property="number" />
+        <result jdbcType="VARCHAR" column="title" javaType="string" property="title"/>
+        <result jdbcType="INTEGER" column="level" javaType="integer" property="level"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.Question" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `question`(question_number, title, level)
+        VALUES (#{number}, #{title}, #{level});
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `question`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.Question">
+        update `question`
+        set
+        <if test="number != null">
+            question_number = #{number},
+        </if>
+        <if test="title != null">
+            title = #{title},
+        </if>
+        <if test="level != null">
+            level = #{level}
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `question`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `question`;
+    </select>
+
+</mapper>
