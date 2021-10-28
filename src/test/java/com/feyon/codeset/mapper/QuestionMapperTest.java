@@ -1,5 +1,6 @@
 package com.feyon.codeset.mapper;
 
+import com.feyon.codeset.common.Pageable;
 import com.feyon.codeset.entity.Question;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,11 @@ class QuestionMapperTest {
         List<Question> list = mapper.findAll();
         assertTrue(list.size() != 0);
         list.forEach(System.out::println);
+    }
+
+    @Test
+    void findAllByPage() {
+        List<Question> questions = mapper.listAllByPage(Pageable.of(2, 2));
+        questions.forEach(System.out::println);
     }
 }

@@ -3,13 +3,14 @@
 <mapper namespace="com.feyon.codeset.mapper.QuestionMapper">
     <resultMap id="resultMap" type="com.feyon.codeset.entity.Question">
         <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
-        <result jdbcType="INTEGER" column="question_number" javaType="integer" property="number" />
+        <result jdbcType="INTEGER" column="question_number" javaType="integer" property="number"/>
         <result jdbcType="VARCHAR" column="title" javaType="string" property="title"/>
         <result jdbcType="INTEGER" column="difficulty" javaType="integer" property="difficulty"/>
     </resultMap>
 
 
-    <insert id="insert" parameterType="com.feyon.codeset.entity.Question" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="insert" parameterType="com.feyon.codeset.entity.Question" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
         insert into `question`(question_number, title, difficulty)
         VALUES (#{number}, #{title}, #{difficulty});
     </insert>
@@ -44,6 +45,12 @@
     <select id="findAll" resultMap="resultMap">
         select *
         from `question`;
+    </select>
+
+    <select id="listAllByPage" resultMap="resultMap" parameterType="com.feyon.codeset.common.Pageable">
+        select *
+        from `question`
+        limit #{limit} offset #{offset}
     </select>
 
 </mapper>
