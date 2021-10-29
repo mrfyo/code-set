@@ -12,6 +12,6 @@ public class TagVO {
 
     private String tagTitle;
 
-    private Integer questionNum;
+    private Long questionNum;
 
 }

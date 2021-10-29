@@ -21,7 +21,7 @@ public interface QuestionTagMapper extends BaseMapper<QuestionTag> {
 
     List<QuestionTag> findByTagId(@Param("tagId") Integer tagId);
 
-    int countByTagId(@Param("tagId") Integer tagId);
+    long countByTagId(@Param("tagId") Integer tagId);
 
     Set<Integer> findQuestionByTagId(@Param("tagIds") Iterable<Integer> tagIds);
 
