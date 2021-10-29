@@ -71,4 +71,11 @@
     <delete id="deleteByTagId">
         delete from question_tag where tag_id = #{tagId};
     </delete>
+
+    <select id="findQuestionByTagId" resultType="integer">
+        select question_id from question_tag where tag_id in
+        <foreach collection="tagIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
 </mapper>

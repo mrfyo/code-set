@@ -31,10 +31,9 @@ class QuestionServiceTest {
     @Test
     void save() {
         QuestionForm form = new QuestionForm();
-        form.setNumber(10);
-        form.setTitle("正则表达式匹配");
-        form.setDifficulty(3);
-        form.setTagIdList(List.of(8, 11));
+        form.setTitle("盛最多水的容器");
+        form.setDifficulty(2);
+        form.setTagIdList(List.of(6));
         questionService.save(form);
     }
 
@@ -46,7 +45,6 @@ class QuestionServiceTest {
     @Test
     void update() {
         QuestionForm form = new QuestionForm();
-        form.setNumber(1);
         form.setTitle("两数之和");
         form.setDifficulty(1);
         form.setTagIdList(List.of(6, 7));

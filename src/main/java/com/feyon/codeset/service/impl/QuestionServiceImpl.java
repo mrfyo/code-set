@@ -56,13 +56,8 @@ public class QuestionServiceImpl implements QuestionService {
     public void save(QuestionForm form) {
         beforeCheck(form);
 
-        Integer number = form.getNumber();
-        if(ObjectUtil.isNotNull(questionMapper.findByNumber(number))) {
-            throw new AdminException("题目序号已存在");
-        }
-
         Question question = new Question();
-        question.setNumber(form.getNumber());
+        question.setNumber(questionMapper.nextNumber());
         question.setTitle(form.getTitle());
         question.setDifficulty(form.getDifficulty());
         questionMapper.insert(question);
@@ -106,12 +101,6 @@ public class QuestionServiceImpl implements QuestionService {
 
         Question question = findById(questionId);
 
-        Integer number = form.getNumber();
-        if(!question.getNumber().equals(number) && ObjectUtil.isNotNull(questionMapper.findByNumber(number))) {
-            throw new AdminException("题目序号已存在");
-        }
-
-        question.setNumber(form.getNumber());
         question.setTitle(form.getTitle());
         question.setDifficulty(form.getDifficulty());
         if(questionMapper.update(question) != 1) {
@@ -130,7 +119,7 @@ public class QuestionServiceImpl implements QuestionService {
     public void remove(Integer questionId) {
         findById(questionId);
         questionMapper.deleteById(questionId);
-        questionMapper.deleteTags(questionId);
+        questionTagMapper.deleteByQuestionId(questionId);
         questionStatisticMapper.deleteById(questionId);
     }
 
@@ -251,7 +240,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         private boolean contains(Question question, QuestionQuery query) {
             if (questionSet == null) {
-                questionSet = questionMapper.listAllForTag(query.getTags());
+                questionSet = questionTagMapper.findQuestionByTagId(query.getTags());
             }
             return questionSet.contains(question.getId());
         }

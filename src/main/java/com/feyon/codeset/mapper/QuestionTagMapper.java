@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Feng Yong
@@ -19,6 +20,8 @@ public interface QuestionTagMapper extends BaseMapper<QuestionTag> {
     int deleteByQuestionId(@Param("questionId") Integer questionId);
 
     List<QuestionTag> findByTagId(@Param("tagId") Integer tagId);
+
+    Set<Integer> findQuestionByTagId(@Param("tagIds") Iterable<Integer> tagIds);
 
     int deleteByTagId(@Param("tagId") Integer tagId);
 }

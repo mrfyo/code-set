@@ -22,13 +22,6 @@
         VALUES (#{number}, #{title}, #{difficulty});
     </insert>
 
-    <insert id="insertTags" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into question_tag(tag_id, question_id) VALUES
-        <foreach collection="questionTags" item="item" open="" separator="," close="">
-            (#{questionId}, #{item})
-        </foreach>
-    </insert>
-
 
 
     <delete id="deleteById" parameterType="integer">
@@ -37,9 +30,7 @@
         where id = #{id};
     </delete>
 
-    <delete id="deleteTags">
-        delete from question_tag where question_id = #{questionId};
-    </delete>
+
 
     <update id="update" parameterType="com.feyon.codeset.entity.Question">
         update `question`
@@ -78,6 +69,11 @@
         select * from question where question_number = #{number};
     </select>
 
+    <select id="nextNumber" resultType="integer">
+        select MAX(question_number) + 1 from question;
+    </select>
+
+
     <select id="findByExample" resultMap="resultMap" parameterType="com.feyon.codeset.common.Pageable">
         select * from question
         <where>
@@ -108,12 +104,7 @@
         </if>;
     </select>
 
-    <select id="listAllForTag" resultType="integer">
-        select question_id from question_tag where tag_id in
-        <foreach collection="tagIds" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>;
-    </select>
+
 
 
 </mapper>

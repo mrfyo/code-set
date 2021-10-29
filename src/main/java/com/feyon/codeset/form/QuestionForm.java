@@ -10,8 +10,6 @@ import java.util.List;
 @Data
 public class QuestionForm {
 
-    private Integer number;
-
     private String title;
 
     private Integer difficulty;
