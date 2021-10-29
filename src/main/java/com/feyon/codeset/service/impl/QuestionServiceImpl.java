@@ -62,7 +62,7 @@ public class QuestionServiceImpl implements QuestionService {
         question.setDifficulty(form.getDifficulty());
         questionMapper.insert(question);
         Integer questionId = question.getId();
-        if(questionId == null) {
+        if (questionId == null) {
             throw new AdminException("新增题目失败");
         }
 
@@ -71,17 +71,17 @@ public class QuestionServiceImpl implements QuestionService {
         statistic.setSolution(0L);
         statistic.setFailSubmission(0L);
         statistic.setSuccessSubmission(0L);
-        if(questionStatisticMapper.insert(statistic) != 1) {
+        if (questionStatisticMapper.insert(statistic) != 1) {
             throw new AdminException("新增题目失败");
         }
 
         List<Integer> tagIdList = form.getTagIdList();
-        if(!ObjectUtils.isEmpty(tagIdList)) {
+        if (!ObjectUtils.isEmpty(tagIdList)) {
             List<QuestionTag> questionTags = tagIdList.stream()
                     .map(tagId -> new QuestionTag(tagId, questionId))
                     .collect(Collectors.toList());
             int count = questionTagMapper.batchInsert(questionTags);
-            if(count != tagIdList.size()) {
+            if (count != tagIdList.size()) {
                 throw new AdminException("新增题目(标签)失败");
             }
         }
@@ -89,7 +89,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     private void beforeCheck(QuestionForm form) {
         List<Integer> tagIdList = form.getTagIdList();
-        if(ObjectUtil.isNotEmpty(tagIdList) && tagMapper.countById(tagIdList) != tagIdList.size()) {
+        if (ObjectUtil.isNotEmpty(tagIdList) && tagMapper.countById(tagIdList) != tagIdList.size()) {
             throw new AdminException("包含未知的标签");
         }
     }
@@ -103,7 +103,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         question.setTitle(form.getTitle());
         question.setDifficulty(form.getDifficulty());
-        if(questionMapper.update(question) != 1) {
+        if (questionMapper.update(question) != 1) {
             throw new AdminException("编辑题目失败");
         }
 
@@ -126,7 +126,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     public Question findById(Integer id) {
         Question question = questionMapper.findById(id);
-        if(question == null) {
+        if (question == null) {
             throw new EntityException("题目不存在");
         }
         return question;
@@ -206,7 +206,8 @@ public class QuestionServiceImpl implements QuestionService {
 
         @Override
         public boolean test(Question question) {
-            return ObjectUtils.isEmpty(query.getStatus()) || contains(question, query);
+            Integer status = query.getStatus();
+            return ObjectUtils.isEmpty(status) || (status == 0 && !contains(question, query)) || (status > 0 && contains(question, query));
         }
 
         private boolean contains(Question question, QuestionQuery query) {
