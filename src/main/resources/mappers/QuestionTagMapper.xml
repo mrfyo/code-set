@@ -68,6 +68,10 @@
         select * from question_tag where tag_id = #{tagId}
     </select>
 
+    <select id="countByTagId" resultType="integer">
+        select COUNT(*) from question_tag where tag_id = #{tagId};
+    </select>
+
     <delete id="deleteByTagId">
         delete from question_tag where tag_id = #{tagId};
     </delete>
