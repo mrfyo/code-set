@@ -22,12 +22,13 @@ public interface QuestionMapper extends BaseMapper<Question> {
 
     int deleteTags(@Param("questionId") Integer questionId);
 
+    Question findByNumber(@Param("number") Integer number);
+
     List<Question> findByExample(Question example);
 
     List<Question> listAllByPage(Pageable pageable);
 
     List<UserQuestion> listAllForUser(@Param("userId") Integer userId, @Param("status") @Nullable Integer status);
-
 
     Set<Integer> listAllForTag(@Param("tagIds") List<Integer> tagIds);
 

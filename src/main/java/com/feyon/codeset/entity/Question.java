@@ -15,6 +15,4 @@ public class Question {
     private String title;
 
     private Integer difficulty;
-
-    private Integer tagIds;
 }

@@ -3,12 +3,14 @@ package com.feyon.codeset.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import com.feyon.codeset.entity.Question;
 import com.feyon.codeset.entity.QuestionStatistic;
+import com.feyon.codeset.entity.QuestionTag;
 import com.feyon.codeset.entity.UserQuestion;
 import com.feyon.codeset.exception.AdminException;
 import com.feyon.codeset.exception.EntityException;
 import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.mapper.QuestionMapper;
 import com.feyon.codeset.mapper.QuestionStatisticMapper;
+import com.feyon.codeset.mapper.QuestionTagMapper;
 import com.feyon.codeset.mapper.TagMapper;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionService;
@@ -35,39 +37,37 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionStatisticMapper questionStatisticMapper;
 
+    private final QuestionTagMapper questionTagMapper;
+
     private final TagMapper tagMapper;
 
-    public QuestionServiceImpl(QuestionMapper questionMapper, QuestionStatisticMapper questionStatisticMapper, TagMapper tagMapper) {
+    public QuestionServiceImpl(QuestionMapper questionMapper,
+                               QuestionStatisticMapper questionStatisticMapper,
+                               QuestionTagMapper questionTagMapper,
+                               TagMapper tagMapper) {
         this.questionMapper = questionMapper;
         this.questionStatisticMapper = questionStatisticMapper;
+        this.questionTagMapper = questionTagMapper;
         this.tagMapper = tagMapper;
     }
 
     @Override
     @Transactional(rollbackFor = AdminException.class)
     public void save(QuestionForm form) {
-        Question example = new Question();
-        example.setNumber(form.getNumber());
-        if(!ObjectUtils.isEmpty(questionMapper.findByExample(example))) {
-            throw new AdminException("题目序号已存在");
-        }
-
-        List<Integer> tags = form.getTags();
-        if(ObjectUtil.isNotEmpty(tags) && tagMapper.countById(tags) != tags.size()) {
-            throw new AdminException("包含未知的标签");
-        }
+        beforeCheck(form);
 
         Question question = new Question();
         question.setNumber(form.getNumber());
         question.setTitle(form.getTitle());
         question.setDifficulty(form.getDifficulty());
         questionMapper.insert(question);
-        if(ObjectUtil.isNull(question.getId())) {
+        Integer questionId = question.getId();
+        if(questionId == null) {
             throw new AdminException("新增题目失败");
         }
 
         QuestionStatistic statistic = new QuestionStatistic();
-        statistic.setId(question.getId());
+        statistic.setId(questionId);
         statistic.setSolution(0L);
         statistic.setFailSubmission(0L);
         statistic.setSuccessSubmission(0L);
@@ -75,12 +75,48 @@ public class QuestionServiceImpl implements QuestionService {
             throw new AdminException("新增题目失败");
         }
 
-        if(!ObjectUtils.isEmpty(tags)) {
-            int count = questionMapper.insertTags(question.getId(), tags);
-            if(count != tags.size()) {
+        List<Integer> tagIdList = form.getTagIdList();
+        if(!ObjectUtils.isEmpty(tagIdList)) {
+            List<QuestionTag> questionTags = tagIdList.stream()
+                    .map(tagId -> new QuestionTag(tagId, questionId))
+                    .collect(Collectors.toList());
+            int count = questionTagMapper.batchInsert(questionTags);
+            if(count != tagIdList.size()) {
                 throw new AdminException("新增题目(标签)失败");
             }
         }
+    }
+
+    private void beforeCheck(QuestionForm form) {
+        Integer number = form.getNumber();
+        if(ObjectUtil.isNotNull(questionMapper.findByNumber(number))) {
+            throw new AdminException("题目序号已存在");
+        }
+
+        List<Integer> tagIdList = form.getTagIdList();
+        if(ObjectUtil.isNotEmpty(tagIdList) && tagMapper.countById(tagIdList) != tagIdList.size()) {
+            throw new AdminException("包含未知的标签");
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = AdminException.class)
+    public void update(Integer questionId, QuestionForm form) {
+        beforeCheck(form);
+
+        Question question = findById(questionId);
+        question.setNumber(form.getNumber());
+        question.setTitle(form.getTitle());
+        question.setDifficulty(form.getDifficulty());
+        if(questionMapper.update(question) != 1) {
+            throw new AdminException("编辑题目失败");
+        }
+
+        questionTagMapper.deleteByQuestionId(questionId);
+        List<QuestionTag> questionTags = form.getTagIdList().stream()
+                .map(tagId -> new QuestionTag(tagId, questionId))
+                .collect(Collectors.toList());
+        questionTagMapper.batchInsert(questionTags);
     }
 
     @Override
@@ -91,8 +127,6 @@ public class QuestionServiceImpl implements QuestionService {
         questionMapper.deleteTags(questionId);
         questionStatisticMapper.deleteById(questionId);
     }
-
-
 
 
     public Question findById(Integer id) {

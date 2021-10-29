@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feyon.codeset.mapper.QuestionTagMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.QuestionTag">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="INTEGER" column="question_tag_id" javaType="integer" property="tagId" />
+        <result jdbcType="INTEGER" column="question_id" javaType="integer" property="questionId"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.QuestionTag" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `question_tag`(tag_id, question_id)
+        VALUES (#{tagId}, #{questionId});
+    </insert>
+
+    <insert id="batchInsert" parameterType="com.feyon.codeset.entity.QuestionTag" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into question_tag (tag_id, question_id) VALUES
+        <foreach collection="tags" item="item" separator=",">
+            (#{item.tagId}, #{item.questionId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `question_tag`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.QuestionTag">
+        update `question_tag`
+        set
+        <if test="tagId != null">
+            tag_id = #{tagId},
+        </if>
+        <if test="questionId != null">
+            question_id = #{questionId}
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `question_tag`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `question_tag`;
+    </select>
+
+    <select id="findAllById" resultMap="resultMap">
+        select * from question_tag where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
+    <select id="findByQuestionId" resultMap="resultMap">
+        select * from question_tag where question_id = #{questionId};
+    </select>
+
+    <delete id="deleteByQuestionId">
+        delete from question_tag where question_id = #{questionId};
+    </delete>
+
+    <select id="findByTagId" resultMap="resultMap">
+        select * from question_tag where tag_id = #{tagId}
+    </select>
+
+    <delete id="deleteByTagId">
+        delete from question_tag where tag_id = #{tagId};
+    </delete>
+</mapper>

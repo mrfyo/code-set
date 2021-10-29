@@ -16,5 +16,5 @@ public class QuestionForm {
 
     private Integer difficulty;
 
-    private List<Integer> tags;
+    private List<Integer> tagIdList;
 }

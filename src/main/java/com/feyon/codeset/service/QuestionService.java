@@ -36,7 +36,8 @@ public interface QuestionService {
          * @return identity worker.
          */
         static Consumer<List<QuestionVO>> build() {
-            return questionVO -> {};
+            return questionVO -> {
+            };
         }
     }
 
@@ -50,12 +51,22 @@ public interface QuestionService {
 
     /**
      * save a question.
+     *
      * @param form question form.
      */
     void save(QuestionForm form);
 
     /**
+     * update a question.
+     *
+     * @param questionId question's id.
+     * @param form       question form.
+     */
+    void update(Integer questionId, QuestionForm form);
+
+    /**
      * remove a question.
+     *
      * @param questionId question's id.
      */
     void remove(Integer questionId);
