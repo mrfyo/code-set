@@ -5,6 +5,8 @@ import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
 
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -37,14 +39,14 @@ public interface QuestionService {
         }
     }
 
-    interface QuestionWorker extends Function<QuestionVO, QuestionVO> {
+    interface QuestionWorker extends Consumer<List<QuestionVO>> {
         /**
          * worker builder
          *
          * @return identity worker.
          */
-        static Function<QuestionVO, QuestionVO> build() {
-            return questionVO -> questionVO;
+        static Consumer<List<QuestionVO>> build() {
+            return questionVO -> {};
         }
     }
 

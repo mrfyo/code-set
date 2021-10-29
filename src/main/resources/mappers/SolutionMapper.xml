@@ -48,6 +48,10 @@
         from `solution`;
     </select>
 
+    <select id="countByQuestionId" parameterType="integer" resultType="long">
+        select COUNT(*) from solution where question_id = #{questionId};
+    </select>
+
     <select id="countByExample" parameterType="com.feyon.codeset.entity.Solution" resultType="long">
         select count(*) from `solution`
         <where>

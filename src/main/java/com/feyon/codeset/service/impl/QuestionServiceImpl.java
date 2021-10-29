@@ -1,7 +1,6 @@
 package com.feyon.codeset.service.impl;
 
 import com.feyon.codeset.entity.Question;
-import com.feyon.codeset.entity.Solution;
 import com.feyon.codeset.entity.Submission;
 import com.feyon.codeset.entity.UserQuestion;
 import com.feyon.codeset.mapper.QuestionMapper;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -44,8 +44,6 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
 
-
-
     /**
      * query question according to conditions. <br>
      * <p>
@@ -65,26 +63,24 @@ public class QuestionServiceImpl implements QuestionService {
                 .and(new UserStatusFilter(query))
                 .and(new TagFilter(query));
 
-        Function<QuestionVO, QuestionVO> workers = QuestionWorker.build()
+        Consumer<List<QuestionVO>> workers = QuestionWorker.build()
                 .andThen(new QuestionStatusWorker(query))
-                .andThen(new QuestionPassRateWorker(passRateHandler));
+                .andThen(new QuestionPassRateWorker(passRateHandler))
+                .andThen(new SolutionCountWorker());
 
 
         List<Question> questions = listAll().stream().filter(filters).collect(Collectors.toList());
         List<QuestionVO> vos = new ArrayList<>(query.getLimit());
-        int end = query.getOffset() + query.getLimit();
+        int end = Math.min(query.getOffset() + query.getLimit(), questions.size());
         for (int i = query.getOffset(); i < end; i++) {
-            vos.add(workers.apply(ModelMapperUtil.map(questions.get(i), QuestionVO.class)));
+            vos.add(ModelMapperUtil.map(questions.get(i), QuestionVO.class));
         }
+        workers.accept(vos);
         return PageVO.of(questions.size(), vos);
     }
 
     public List<Question> listAll() {
         return questionMapper.findAll();
-    }
-
-    private long solutionNumberForQuestion(Integer questionId) {
-        return solutionMapper.countByExample(new Solution(questionId, null));
     }
 
     /**
@@ -173,10 +169,11 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         @Override
-        public QuestionVO apply(QuestionVO questionVO) {
-            Integer status = ObjectUtils.isEmpty(query.getStatus()) ? findStatus(questionVO.getQuestionId()) : query.getStatus();
-            questionVO.setStatus(status);
-            return questionVO;
+        public void accept(List<QuestionVO> vos) {
+            for (QuestionVO vo : vos) {
+                Integer status = ObjectUtils.isEmpty(query.getStatus()) ? findStatus(vo.getQuestionId()) : query.getStatus();
+                vo.setStatus(status);
+            }
         }
 
         public Integer findStatus(Integer questionId) {
@@ -200,12 +197,25 @@ public class QuestionServiceImpl implements QuestionService {
             this.handler = handler;
         }
 
+
         @Override
-        public QuestionVO apply(QuestionVO questionVO) {
-            questionVO.setPassRate(handler.handle(questionVO.getQuestionId()));
-            return questionVO;
+        public void accept(List<QuestionVO> vos) {
+            for (QuestionVO vo : vos) {
+                vo.setPassRate(handler.handle(vo.getQuestionId()));
+            }
         }
     }
+
+    public class SolutionCountWorker implements QuestionWorker {
+        @Override
+        public void accept(List<QuestionVO> vos) {
+            for (QuestionVO vo : vos) {
+                long num = solutionMapper.countByQuestionId(vo.getQuestionId());
+                vo.setResolutionNum(num);
+            }
+        }
+    }
+
 
     /**
      * the pass rate of question for user.
