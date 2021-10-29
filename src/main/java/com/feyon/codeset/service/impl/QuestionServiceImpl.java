@@ -56,6 +56,11 @@ public class QuestionServiceImpl implements QuestionService {
     public void save(QuestionForm form) {
         beforeCheck(form);
 
+        Integer number = form.getNumber();
+        if(ObjectUtil.isNotNull(questionMapper.findByNumber(number))) {
+            throw new AdminException("题目序号已存在");
+        }
+
         Question question = new Question();
         question.setNumber(form.getNumber());
         question.setTitle(form.getTitle());
@@ -88,11 +93,6 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     private void beforeCheck(QuestionForm form) {
-        Integer number = form.getNumber();
-        if(ObjectUtil.isNotNull(questionMapper.findByNumber(number))) {
-            throw new AdminException("题目序号已存在");
-        }
-
         List<Integer> tagIdList = form.getTagIdList();
         if(ObjectUtil.isNotEmpty(tagIdList) && tagMapper.countById(tagIdList) != tagIdList.size()) {
             throw new AdminException("包含未知的标签");
@@ -105,6 +105,12 @@ public class QuestionServiceImpl implements QuestionService {
         beforeCheck(form);
 
         Question question = findById(questionId);
+
+        Integer number = form.getNumber();
+        if(!question.getNumber().equals(number) && ObjectUtil.isNotNull(questionMapper.findByNumber(number))) {
+            throw new AdminException("题目序号已存在");
+        }
+
         question.setNumber(form.getNumber());
         question.setTitle(form.getTitle());
         question.setDifficulty(form.getDifficulty());

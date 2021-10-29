@@ -10,15 +10,15 @@ public class QuestionTag {
 
     private Integer id;
 
-    private Integer questionId;
-
     private Integer tagId;
+
+    private Integer questionId;
 
     public QuestionTag() {
     }
 
-    public QuestionTag(Integer questionId, Integer tagId) {
-        this.questionId = questionId;
+    public QuestionTag(Integer tagId, Integer questionId) {
         this.tagId = tagId;
+        this.questionId = questionId;
     }
 }

@@ -13,7 +13,7 @@
             keyProperty="id"
             keyColumn="id">
         insert into `question_statistic`(id, solution, success_submission, fail_submission)
-        VALUES (#{id}, #{solution}, #{successSubmission}, #{faiSubmission});
+        VALUES (#{id}, #{solution}, #{successSubmission}, #{failSubmission});
     </insert>
 
     <delete id="deleteById" parameterType="integer">

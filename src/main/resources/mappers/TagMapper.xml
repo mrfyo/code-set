@@ -45,7 +45,7 @@
         </foreach>;
     </select>
 
-    <select id="countById" resultMap="resultMap">
+    <select id="countById" resultType="long">
         select COUNT(*) from tag where id in
         <foreach collection="ids" item="item" open="(" separator="," close=")">
             #{item}
