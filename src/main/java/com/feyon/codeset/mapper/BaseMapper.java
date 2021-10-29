@@ -5,6 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Feng Yong
@@ -37,8 +38,8 @@ public interface BaseMapper<T> {
      * @param id entity's id
      * @return entity object or null
      */
-    @Nullable
-    T findById(Integer id);
+    @NonNull
+    Optional<T> findById(Integer id);
 
     /**
      * return all entity.

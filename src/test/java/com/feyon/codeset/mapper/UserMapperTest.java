@@ -27,7 +27,7 @@ class UserMapperTest {
 
     @Test
     void update() {
-        var user = mapper.findById(1);
+        var user = mapper.findById(1).orElse(null);
         assertNotNull(user);
         user.setPassword("admin");
         assertEquals(1, mapper.update(user));
@@ -40,7 +40,7 @@ class UserMapperTest {
 
     @Test
     void findById() {
-        var role = mapper.findById(1);
+        var role = mapper.findById(1).orElse(null);
         assertNotNull(role);
         assertEquals(1, role.getId());
         assertEquals("user", role.getUsername());

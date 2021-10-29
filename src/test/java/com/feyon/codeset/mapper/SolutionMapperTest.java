@@ -31,7 +31,7 @@ class SolutionMapperTest {
 
     @Test
     void update() {
-        Solution solution = mapper.findById(1);
+        Solution solution = mapper.findById(1).orElse(null);
         assertNotNull(solution);
         solution.setQuestionId(2);
         assertEquals(1, mapper.update(solution));
@@ -44,7 +44,7 @@ class SolutionMapperTest {
 
     @Test
     void findById() {
-        Solution solution = mapper.findById(1);
+        Solution solution = mapper.findById(1).orElse(null);
         assertNotNull(solution);
         assertEquals(1, solution.getId());
         assertEquals("暴力解法--两数之和", solution.getTitle());

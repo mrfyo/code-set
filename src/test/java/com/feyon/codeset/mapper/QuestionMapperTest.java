@@ -29,7 +29,7 @@ class QuestionMapperTest {
 
     @Test
     void update() {
-        Question question = mapper.findById(1);
+        Question question = mapper.findById(1).orElse(null);
         assertNotNull(question);
         question.setDifficulty(3);
         assertEquals(1, mapper.update(question));
@@ -42,7 +42,7 @@ class QuestionMapperTest {
 
     @Test
     void findById() {
-        Question question = mapper.findById(1);
+        Question question = mapper.findById(1).orElse(null);
         assertNotNull(question);
         assertEquals(1, question.getId());
         assertEquals("两数之和", question.getTitle());
