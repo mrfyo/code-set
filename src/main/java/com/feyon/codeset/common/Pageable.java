@@ -30,7 +30,7 @@ public interface Pageable {
     default int getOffset() {
         Integer page = getPage();
         Integer size = getSize();
-        return (page == null ? 0 : page - 1) * (size == null ? 0 : size);
+        return (page == null ? 0 : page - 1) * (size == null || size > 1000 ? 0 : size);
     }
 
     /**
