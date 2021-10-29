@@ -1,6 +1,9 @@
 package com.feyon.codeset.vo;
 
+import com.feyon.codeset.entity.Tag;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * View Object: Question
@@ -37,6 +40,11 @@ public class QuestionVO {
      * <b>3</b> means difficult <br>
      */
     private Integer questionDifficulty;
+
+    /**
+     * tags of question.
+     */
+    private List<Tag> tags;
 
     /**
      * the number of resolution of this question. <br>

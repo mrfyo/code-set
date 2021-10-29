@@ -17,6 +17,8 @@ public interface QuestionTagMapper extends BaseMapper<QuestionTag> {
 
     List<QuestionTag> findByQuestionId(@Param("questionId") Integer questionId);
 
+    List<QuestionTag> findAllByQuestionId(@Param("questionIds") Iterable<Integer> questionIds);
+
     int deleteByQuestionId(@Param("questionId") Integer questionId);
 
     List<QuestionTag> findByTagId(@Param("tagId") Integer tagId);

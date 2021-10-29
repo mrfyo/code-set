@@ -60,6 +60,13 @@
         select * from question_tag where question_id = #{questionId};
     </select>
 
+    <select id="findAllByQuestionId" resultMap="resultMap">
+        select * from question_tag where question_id in
+        <foreach collection="questionIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
     <delete id="deleteByQuestionId">
         delete from question_tag where question_id = #{questionId};
     </delete>

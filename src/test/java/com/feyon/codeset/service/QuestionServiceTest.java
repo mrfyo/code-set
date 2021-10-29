@@ -25,7 +25,7 @@ class QuestionServiceTest {
         query.setStatus(0);
         query.setPage(1);
         query.setSize(10);
-        System.out.println(questionService.listAll(query));;
+        System.out.println(questionService.listAll(query));
     }
 
     @Test

@@ -1,10 +1,7 @@
 package com.feyon.codeset.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.feyon.codeset.entity.Question;
-import com.feyon.codeset.entity.QuestionStatistic;
-import com.feyon.codeset.entity.QuestionTag;
-import com.feyon.codeset.entity.UserQuestion;
+import com.feyon.codeset.entity.*;
 import com.feyon.codeset.exception.AdminException;
 import com.feyon.codeset.exception.EntityException;
 import com.feyon.codeset.form.QuestionForm;
@@ -160,7 +157,8 @@ public class QuestionServiceImpl implements QuestionService {
 
         Consumer<List<QuestionVO>> workers = QuestionWorker.build()
                 .andThen(new QuestionStatusWorker(query))
-                .andThen(new QuestionStatisticWorker(questionIds, questionStatisticMapper));
+                .andThen(new QuestionStatisticWorker(questionIds, questionStatisticMapper))
+                .andThen(new QuestionTagWorker(questionIds));
 
         workers.accept(vos);
         return PageVO.of(questions.size(), vos);
@@ -310,6 +308,39 @@ public class QuestionServiceImpl implements QuestionService {
                     vo.setResolutionNum(stat.getSolution());
                     vo.setPassRate(stat.getPassRate());
                 });
+            }
+        }
+    }
+
+    private class QuestionTagWorker implements QuestionWorker {
+
+        private final List<Integer> questionIds;
+
+        private QuestionTagWorker(List<Integer> questionIds) {
+            this.questionIds = questionIds;
+        }
+
+        @Override
+        public void accept(List<QuestionVO> vos) {
+
+            Map<Integer, QuestionVO> voMap = vos
+                    .stream()
+                    .peek(questionVO -> questionVO.setTags(new ArrayList<>()))
+                    .collect(Collectors.toMap(QuestionVO::getQuestionId, questionVO -> questionVO));
+
+            List<QuestionTag> questionTags = questionTagMapper.findAllByQuestionId(questionIds);
+
+            Set<Integer> tagIds = new HashSet<>();
+            questionTags.forEach(questionTag -> tagIds.add(questionTag.getTagId()));
+
+            Map<Integer, Tag> tagMap = tagMapper.findAllById(tagIds)
+                    .stream()
+                    .collect(Collectors.toMap(Tag::getId, tag -> tag));
+
+            for (QuestionTag questionTag : questionTags) {
+                Integer tagId = questionTag.getTagId();
+                Integer questionId = questionTag.getQuestionId();
+                voMap.get(questionId).getTags().add(tagMap.get(tagId));
             }
         }
     }
