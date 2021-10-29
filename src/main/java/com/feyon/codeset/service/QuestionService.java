@@ -1,8 +1,12 @@
 package com.feyon.codeset.service;
 
+import com.feyon.codeset.entity.Question;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
+
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 
 /**
@@ -18,6 +22,16 @@ public interface QuestionService {
          * @return the pass rate of question
          */
         double query(Integer questionId);
+    }
+
+    interface QuestionFilter extends Predicate<Question> {
+        /**
+         * filter builder
+         * @return all pass filter.
+         */
+        static Predicate<Question> build() {
+            return question -> true;
+        }
     }
 
     /**

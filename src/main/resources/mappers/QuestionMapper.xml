@@ -53,6 +53,20 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="listAllForUser" resultType="integer">
+        select question_id
+        from `user_question`
+        where user_id = #{userId}
+          and status = #{status};
+    </select>
+
+    <select id="listAllForTag" resultType="integer">
+        select question_id from `tag_question` where tag_id in
+        <foreach collection="tagIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
     <select id="containsTag" resultType="boolean">
         select count(*)
         from tag_question

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * ORM: Question
@@ -21,6 +22,10 @@ public interface QuestionMapper extends BaseMapper<Question> {
      * @return question list.
      */
     List<Question> listAllByPage(Pageable pageable);
+
+    Set<Integer> listAllForUser(@Param("userId")Integer userId, @Param("status") Integer status);
+
+    Set<Integer> listAllForTag(@Param("tagIds") List<Integer> tagIds);
 
     /**
      * return the question is or not contains any tag.

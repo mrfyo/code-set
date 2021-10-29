@@ -19,6 +19,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +46,7 @@ public class QuestionServiceImpl implements QuestionService {
         this.passRateQueryer = passRateQueryer;
     }
 
+
     /**
      * query question according to conditions. <br>
      * <p>
@@ -58,11 +61,13 @@ public class QuestionServiceImpl implements QuestionService {
      */
     @Override
     public PageVO<QuestionVO> listAll(QuestionQuery query) {
-        Integer userId = 1;
+        Predicate<Question> filter = QuestionFilter.build()
+                .and(new DifficultyFilter(query))
+                .and(new UserStatusFilter(query))
+                .and(new TagFilter(query));
+
         List<Question> questions = listAll().stream()
-                .filter(question -> ObjectUtils.isEmpty(query.getDifficulty()) || question.getDifficulty().equals(query.getDifficulty()))
-                .filter(question -> ObjectUtils.isEmpty(query.getStatus()) || questionMapper.holdStatus(question.getId(), userId, query.getStatus()))
-                .filter(question -> ObjectUtils.isEmpty(query.getTags()) || questionMapper.containsTag(question.getId(), query.getTags()))
+                .filter(filter)
                 .collect(Collectors.toList());
 
         List<QuestionVO> vos = new ArrayList<>(query.getLimit());
@@ -84,6 +89,78 @@ public class QuestionServiceImpl implements QuestionService {
         return solutionMapper.countByExample(new Solution(questionId, null));
     }
 
+    /**
+     * Filter: Question.Difficulty
+     */
+    private static class DifficultyFilter implements QuestionFilter {
+
+        private final QuestionQuery query;
+
+        private DifficultyFilter(QuestionQuery query) {
+            this.query = query;
+        }
+
+        @Override
+        public boolean test(Question question) {
+            return ObjectUtils.isEmpty(query.getDifficulty()) || question.getDifficulty().equals(query.getDifficulty());
+        }
+    }
+
+    /**
+     * Filter: User Status
+     */
+    private class UserStatusFilter implements QuestionFilter {
+
+        private final QuestionQuery query;
+
+        private Set<Integer> questionSet;
+
+        private UserStatusFilter(QuestionQuery query) {
+            this.query = query;
+        }
+
+        @Override
+        public boolean test(Question question) {
+            return ObjectUtils.isEmpty(query.getStatus()) || contains(question, query);
+        }
+
+        private boolean contains(Question question, QuestionQuery query) {
+            if (questionSet == null) {
+                questionSet = questionMapper.listAllForUser(1, query.getStatus());
+            }
+            return questionSet.contains(question.getId());
+        }
+    }
+
+    /**
+     * Filter: Question Tags
+     */
+    private class TagFilter implements QuestionFilter {
+
+        private final QuestionQuery query;
+
+        private Set<Integer> questionSet;
+
+        private TagFilter(QuestionQuery query) {
+            this.query = query;
+        }
+
+        @Override
+        public boolean test(Question question) {
+            return ObjectUtils.isEmpty(query.getTags()) || contains(question, query);
+        }
+
+        private boolean contains(Question question, QuestionQuery query) {
+            if (questionSet == null) {
+                questionSet = questionMapper.listAllForTag(query.getTags());
+            }
+            return questionSet.contains(question.getId());
+        }
+    }
+
+    /**
+     * the pass rate of question for user.
+     */
     @Component
     public static class SimplePassRateQueryer implements PassRateQueryer {
 
@@ -96,8 +173,8 @@ public class QuestionServiceImpl implements QuestionService {
         @Override
         public double query(Integer questionId) {
             long total = submissionMapper.countByExample(new Submission(null, questionId, null));
-            if(total == 0) {
-                return  0;
+            if (total == 0) {
+                return 0;
             }
             long pass = submissionMapper.countByExample(new Submission(1, questionId, null));
             long result = (pass * 1000 / total);
