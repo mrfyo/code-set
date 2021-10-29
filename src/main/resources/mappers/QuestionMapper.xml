@@ -83,22 +83,4 @@
         </foreach>;
     </select>
 
-    <select id="containsTag" resultType="boolean">
-        select count(*)
-        from tag_question
-        where question_id = #{questionId}
-        and tag_id in
-        <foreach collection="tagIds" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>;
-    </select>
-
-    <select id="holdStatus" resultType="boolean">
-        select count(*)
-        from user_question
-        where question_id = #{questionId}
-          and user_id = #{userId}
-          and status = #{status};
-    </select>
-
 </mapper>

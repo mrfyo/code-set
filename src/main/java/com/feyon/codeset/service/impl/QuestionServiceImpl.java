@@ -1,26 +1,20 @@
 package com.feyon.codeset.service.impl;
 
 import com.feyon.codeset.entity.Question;
-import com.feyon.codeset.entity.Submission;
+import com.feyon.codeset.entity.QuestionStatistic;
 import com.feyon.codeset.entity.UserQuestion;
 import com.feyon.codeset.mapper.QuestionMapper;
-import com.feyon.codeset.mapper.SolutionMapper;
-import com.feyon.codeset.mapper.SubmissionMapper;
+import com.feyon.codeset.mapper.QuestionStatisticMapper;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -32,15 +26,11 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionMapper questionMapper;
 
-    private final SolutionMapper solutionMapper;
+    private final QuestionStatisticMapper questionStatisticMapper;
 
-    private final PassRateHandler passRateHandler;
-
-
-    public QuestionServiceImpl(QuestionMapper questionMapper, SolutionMapper solutionMapper, PassRateHandler passRateHandler) {
+    public QuestionServiceImpl(QuestionMapper questionMapper, QuestionStatisticMapper questionStatisticMapper) {
         this.questionMapper = questionMapper;
-        this.solutionMapper = solutionMapper;
-        this.passRateHandler = passRateHandler;
+        this.questionStatisticMapper = questionStatisticMapper;
     }
 
 
@@ -63,18 +53,21 @@ public class QuestionServiceImpl implements QuestionService {
                 .and(new UserStatusFilter(query))
                 .and(new TagFilter(query));
 
-        Consumer<List<QuestionVO>> workers = QuestionWorker.build()
-                .andThen(new QuestionStatusWorker(query))
-                .andThen(new QuestionPassRateWorker(passRateHandler))
-                .andThen(new SolutionCountWorker());
-
-
         List<Question> questions = listAll().stream().filter(filters).collect(Collectors.toList());
         List<QuestionVO> vos = new ArrayList<>(query.getLimit());
+        List<Integer> questionIds = new ArrayList<>(query.getLimit());
+
         int end = Math.min(query.getOffset() + query.getLimit(), questions.size());
         for (int i = query.getOffset(); i < end; i++) {
-            vos.add(ModelMapperUtil.map(questions.get(i), QuestionVO.class));
+            Question question = questions.get(i);
+            questionIds.add(question.getId());
+            vos.add(ModelMapperUtil.map(question, QuestionVO.class));
         }
+
+        Consumer<List<QuestionVO>> workers = QuestionWorker.build()
+                .andThen(new QuestionStatusWorker(query))
+                .andThen(new QuestionStatWorker(questionIds, questionStatisticMapper));
+
         workers.accept(vos);
         return PageVO.of(questions.size(), vos);
     }
@@ -189,55 +182,41 @@ public class QuestionServiceImpl implements QuestionService {
     /**
      * Worker: Pass Rate
      */
-    public static class QuestionPassRateWorker implements QuestionWorker {
+    public static class QuestionStatWorker implements QuestionWorker {
+        private final QuestionStatisticMapper mapper;
 
-        final PassRateHandler handler;
+        private final List<Integer> questionIds;
 
-        public QuestionPassRateWorker(PassRateHandler handler) {
-            this.handler = handler;
+
+        public QuestionStatWorker(List<Integer> questionIds, QuestionStatisticMapper mapper) {
+            this.questionIds = questionIds;
+            this.mapper = mapper;
         }
-
 
         @Override
         public void accept(List<QuestionVO> vos) {
-            for (QuestionVO vo : vos) {
-                vo.setPassRate(handler.handle(vo.getQuestionId()));
+            final int threshold = 100;
+            List<QuestionStatistic> statistics = mapper.findAllById(questionIds);
+            if (vos.size() <= threshold) {
+                for (QuestionVO vo : vos) {
+                    for (QuestionStatistic stat : statistics) {
+                        if (stat.getId().equals(vo.getQuestionId())) {
+                            vo.setResolutionNum(stat.getSolution());
+                            vo.setPassRate(stat.getPassRate());
+                            break;
+                        }
+                    }
+                }
+            } else {
+                Map<Integer, QuestionStatistic> map = new HashMap<>(statistics.size());
+                statistics.forEach(stat -> map.put(stat.getId(), stat));
+                vos.forEach(vo -> {
+                    QuestionStatistic stat = map.get(vo.getQuestionId());
+                    vo.setResolutionNum(stat.getSolution());
+                    vo.setPassRate(stat.getPassRate());
+                });
             }
         }
     }
 
-    public class SolutionCountWorker implements QuestionWorker {
-        @Override
-        public void accept(List<QuestionVO> vos) {
-            for (QuestionVO vo : vos) {
-                long num = solutionMapper.countByQuestionId(vo.getQuestionId());
-                vo.setResolutionNum(num);
-            }
-        }
-    }
-
-
-    /**
-     * the pass rate of question for user.
-     */
-    @Component
-    public static class SimplePassRateHandler implements PassRateHandler {
-
-        private final SubmissionMapper submissionMapper;
-
-        public SimplePassRateHandler(SubmissionMapper submissionMapper) {
-            this.submissionMapper = submissionMapper;
-        }
-
-        @Override
-        public double handle(Integer questionId) {
-            long total = submissionMapper.countByExample(new Submission(null, questionId, null));
-            if (total == 0) {
-                return 0;
-            }
-            long pass = submissionMapper.countByExample(new Submission(1, questionId, null));
-            long result = (pass * 1000 / total);
-            return result / 10.0;
-        }
-    }
 }

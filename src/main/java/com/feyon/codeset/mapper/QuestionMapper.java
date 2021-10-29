@@ -28,25 +28,4 @@ public interface QuestionMapper extends BaseMapper<Question> {
     List<UserQuestion> listAllForUser(@Param("userId")Integer userId, @Param("status") @Nullable Integer status);
 
     Set<Integer> listAllForTag(@Param("tagIds") List<Integer> tagIds);
-
-
-
-    /**
-     * return the question is or not contains any tag.
-     *
-     * @param questionId question's id.
-     * @param tagIds     the list of id of list.
-     * @return the question is or not contains any tag.
-     */
-    boolean containsTag(@Param("questionId") Integer questionId, @Param("tagIds") List<Integer> tagIds);
-
-    /**
-     * return the question is or not has same status for this user.
-     *
-     * @param questionId question's id.
-     * @param userId     user' id
-     * @param status user's status
-     * @return the question is or not has same status for this user.
-     */
-    boolean holdStatus(@Param("questionId") Integer questionId, @Param("userId") Integer userId, @Param("status") Integer status);
 }

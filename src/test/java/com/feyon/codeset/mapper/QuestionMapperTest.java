@@ -61,14 +61,4 @@ class QuestionMapperTest {
         List<Question> questions = mapper.listAllByPage(Pageable.of(2, 2));
         questions.forEach(System.out::println);
     }
-
-    @Test
-    void containsTag() {
-        assertTrue(mapper.containsTag(1, List.of(6)));
-    }
-
-    @Test
-    void holdStatus() {
-        assertTrue(mapper.holdStatus(1, 1, 2));
-    }
 }
