@@ -312,6 +312,9 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
 
+    /**
+     * Worker: Question Tags
+     */
     private class QuestionTagWorker implements QuestionWorker {
 
         private final List<Integer> questionIds;
