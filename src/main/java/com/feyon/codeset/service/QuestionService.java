@@ -18,16 +18,6 @@ import java.util.function.Predicate;
  */
 public interface QuestionService {
 
-    interface PassRateHandler {
-        /**
-         * return the pass rate of question
-         *
-         * @param questionId question's id
-         * @return the pass rate of question
-         */
-        double handle(Integer questionId);
-    }
-
     interface QuestionFilter extends Predicate<Question> {
         /**
          * filter builder

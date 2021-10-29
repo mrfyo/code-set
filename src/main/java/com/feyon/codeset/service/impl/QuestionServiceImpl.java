@@ -66,7 +66,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         Consumer<List<QuestionVO>> workers = QuestionWorker.build()
                 .andThen(new QuestionStatusWorker(query))
-                .andThen(new QuestionStatWorker(questionIds, questionStatisticMapper));
+                .andThen(new QuestionStatisticWorker(questionIds, questionStatisticMapper));
 
         workers.accept(vos);
         return PageVO.of(questions.size(), vos);
@@ -151,7 +151,7 @@ public class QuestionServiceImpl implements QuestionService {
     /**
      * Worker: process `status` in {@link QuestionVO}
      */
-    public class QuestionStatusWorker implements QuestionWorker {
+    private class QuestionStatusWorker implements QuestionWorker {
 
         private final QuestionQuery query;
 
@@ -180,15 +180,15 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     /**
-     * Worker: Pass Rate
+     * Worker: Statistics
      */
-    public static class QuestionStatWorker implements QuestionWorker {
+    private static class QuestionStatisticWorker implements QuestionWorker {
         private final QuestionStatisticMapper mapper;
 
         private final List<Integer> questionIds;
 
 
-        public QuestionStatWorker(List<Integer> questionIds, QuestionStatisticMapper mapper) {
+        public QuestionStatisticWorker(List<Integer> questionIds, QuestionStatisticMapper mapper) {
             this.questionIds = questionIds;
             this.mapper = mapper;
         }
