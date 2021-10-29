@@ -1,16 +1,22 @@
 package com.feyon.codeset.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.feyon.codeset.entity.Question;
 import com.feyon.codeset.entity.QuestionStatistic;
 import com.feyon.codeset.entity.UserQuestion;
+import com.feyon.codeset.exception.AdminException;
+import com.feyon.codeset.exception.EntityException;
+import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.mapper.QuestionMapper;
 import com.feyon.codeset.mapper.QuestionStatisticMapper;
+import com.feyon.codeset.mapper.TagMapper;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
@@ -24,15 +30,78 @@ import java.util.stream.Collectors;
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
+
     private final QuestionMapper questionMapper;
 
     private final QuestionStatisticMapper questionStatisticMapper;
 
-    public QuestionServiceImpl(QuestionMapper questionMapper, QuestionStatisticMapper questionStatisticMapper) {
+    private final TagMapper tagMapper;
+
+    public QuestionServiceImpl(QuestionMapper questionMapper, QuestionStatisticMapper questionStatisticMapper, TagMapper tagMapper) {
         this.questionMapper = questionMapper;
         this.questionStatisticMapper = questionStatisticMapper;
+        this.tagMapper = tagMapper;
     }
 
+    @Override
+    @Transactional(rollbackFor = AdminException.class)
+    public void save(QuestionForm form) {
+        Question example = new Question();
+        example.setNumber(form.getNumber());
+        if(!ObjectUtils.isEmpty(questionMapper.findByExample(example))) {
+            throw new AdminException("题目序号已存在");
+        }
+
+        List<Integer> tags = form.getTags();
+        if(ObjectUtil.isNotEmpty(tags) && tagMapper.countById(tags) != tags.size()) {
+            throw new AdminException("包含未知的标签");
+        }
+
+        Question question = new Question();
+        question.setNumber(form.getNumber());
+        question.setTitle(form.getTitle());
+        question.setDifficulty(form.getDifficulty());
+        questionMapper.insert(question);
+        if(ObjectUtil.isNull(question.getId())) {
+            throw new AdminException("新增题目失败");
+        }
+
+        QuestionStatistic statistic = new QuestionStatistic();
+        statistic.setId(question.getId());
+        statistic.setSolution(0L);
+        statistic.setFailSubmission(0L);
+        statistic.setSuccessSubmission(0L);
+        if(questionStatisticMapper.insert(statistic) != 1) {
+            throw new AdminException("新增题目失败");
+        }
+
+        if(!ObjectUtils.isEmpty(tags)) {
+            int count = questionMapper.insertTags(question.getId(), tags);
+            if(count != tags.size()) {
+                throw new AdminException("新增题目(标签)失败");
+            }
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void remove(Integer questionId) {
+        findById(questionId);
+        questionMapper.deleteById(questionId);
+        questionMapper.deleteTags(questionId);
+        questionStatisticMapper.deleteById(questionId);
+    }
+
+
+
+
+    public Question findById(Integer id) {
+        Question question = questionMapper.findById(id);
+        if(question == null) {
+            throw new EntityException("题目不存在");
+        }
+        return question;
+    }
 
     /**
      * query question according to conditions. <br>

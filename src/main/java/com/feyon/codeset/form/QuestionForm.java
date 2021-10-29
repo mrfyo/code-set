@@ -1,14 +1,14 @@
-package com.feyon.codeset.entity;
+package com.feyon.codeset.form;
 
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author Feng Yong
  */
 @Data
-public class Question {
-
-    private Integer id;
+public class QuestionForm {
 
     private Integer number;
 
@@ -16,5 +16,5 @@ public class Question {
 
     private Integer difficulty;
 
-    private Integer tagIds;
+    private List<Integer> tags;
 }

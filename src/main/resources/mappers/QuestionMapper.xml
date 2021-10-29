@@ -22,10 +22,23 @@
         VALUES (#{number}, #{title}, #{difficulty});
     </insert>
 
+    <insert id="insertTags" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `tag_question`(tag_id, question_id) VALUES
+        <foreach collection="questionTags" item="item" open="" separator="," close="">
+            (#{questionId}, #{item})
+        </foreach>
+    </insert>
+
+
+
     <delete id="deleteById" parameterType="integer">
         delete
         from `question`
         where id = #{id};
+    </delete>
+
+    <delete id="deleteTags">
+        delete from tag_question where question_id = #{questionId};
     </delete>
 
     <update id="update" parameterType="com.feyon.codeset.entity.Question">
@@ -61,6 +74,21 @@
         </foreach>;
     </select>
 
+    <select id="findByExample" resultMap="resultMap" parameterType="com.feyon.codeset.common.Pageable">
+        select * from question
+        <where>
+            <if test="number != null">
+                and question_number = #{number}
+            </if>
+            <if test="title != null">
+                and title = #{title}
+            </if>
+            <if test="difficulty != null">
+                and difficulty = #{difficulty}
+            </if>
+        </where>
+    </select>
+
     <select id="listAllByPage" resultMap="resultMap" parameterType="com.feyon.codeset.common.Pageable">
         select *
         from `question`
@@ -82,5 +110,6 @@
             #{item}
         </foreach>;
     </select>
+
 
 </mapper>

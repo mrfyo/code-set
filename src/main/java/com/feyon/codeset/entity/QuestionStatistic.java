@@ -18,6 +18,7 @@ public class QuestionStatistic {
     private Long failSubmission;
 
 
+
     public double getPassRate() {
         long success = NullUtil.defaultValue(successSubmission, 0L);
         long total = success + NullUtil.defaultValue(failSubmission, 0L);

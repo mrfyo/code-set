@@ -17,15 +17,18 @@ import java.util.Set;
  */
 @Mapper
 public interface QuestionMapper extends BaseMapper<Question> {
-    /**
-     * paging query.
-     *
-     * @param pageable {@link Pageable}
-     * @return question list.
-     */
+
+    int insertTags(@Param("questionId") Integer questionId, @Param("questionTags") List<Integer> questionTags);
+
+    int deleteTags(@Param("questionId") Integer questionId);
+
+    List<Question> findByExample(Question example);
+
     List<Question> listAllByPage(Pageable pageable);
 
-    List<UserQuestion> listAllForUser(@Param("userId")Integer userId, @Param("status") @Nullable Integer status);
+    List<UserQuestion> listAllForUser(@Param("userId") Integer userId, @Param("status") @Nullable Integer status);
+
 
     Set<Integer> listAllForTag(@Param("tagIds") List<Integer> tagIds);
+
 }

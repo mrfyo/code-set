@@ -1,13 +1,13 @@
 package com.feyon.codeset.service;
 
 import com.feyon.codeset.entity.Question;
+import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 
@@ -48,5 +48,15 @@ public interface QuestionService {
      */
     PageVO<QuestionVO> listAll(QuestionQuery query);
 
+    /**
+     * save a question.
+     * @param form question form.
+     */
+    void save(QuestionForm form);
 
+    /**
+     * remove a question.
+     * @param questionId question's id.
+     */
+    void remove(Integer questionId);
 }
