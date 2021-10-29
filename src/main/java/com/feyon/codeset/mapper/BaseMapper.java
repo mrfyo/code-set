@@ -1,5 +1,6 @@
 package com.feyon.codeset.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -44,4 +45,6 @@ public interface BaseMapper<T> {
      * @return all entity.
      */
     List<T> findAll();
+
+    List<T> findAllById(@Param("ids") Iterable<Integer> ids);
 }
