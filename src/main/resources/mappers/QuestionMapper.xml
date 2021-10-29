@@ -54,6 +54,13 @@
         from `question`;
     </select>
 
+    <select id="findAllById" resultMap="resultMap">
+        select * from question where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
     <select id="listAllByPage" resultMap="resultMap" parameterType="com.feyon.codeset.common.Pageable">
         select *
         from `question`
