@@ -37,4 +37,11 @@
         select *
         from `user_profile`;
     </select>
+
+    <select id="findAllById" resultMap="resultMap">
+        select * from user_profile where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
 </mapper>

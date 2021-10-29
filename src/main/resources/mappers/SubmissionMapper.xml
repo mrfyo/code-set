@@ -48,6 +48,13 @@
         from `submission`;
     </select>
 
+    <select id="findAllById" resultMap="resultMap">
+        select * from submission where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
     <select id="findAllByExample" parameterType="com.feyon.codeset.entity.Submission" resultMap="resultMap">
         select result, question_id, user_id from `submission`
         <where>

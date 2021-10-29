@@ -36,6 +36,13 @@
         where id = #{id};
     </select>
 
+    <select id="findAllById" resultMap="resultMap">
+        select * from submission_content where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
     <select id="findAll" resultMap="resultMap">
         select *
         from `submission_content`;

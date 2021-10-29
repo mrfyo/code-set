@@ -41,4 +41,11 @@
         select *
         from `role`;
     </select>
+
+    <select id="findAllById" resultMap="resultMap">
+        select * from role where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
 </mapper>

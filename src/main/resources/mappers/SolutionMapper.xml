@@ -48,6 +48,13 @@
         from `solution`;
     </select>
 
+    <select id="findAllById" resultMap="resultMap">
+        select * from solution where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
     <select id="countByQuestionId" parameterType="integer" resultType="long">
         select COUNT(*) from solution where question_id = #{questionId};
     </select>
