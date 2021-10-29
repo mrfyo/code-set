@@ -125,11 +125,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     public Question findById(Integer id) {
-        Question question = questionMapper.findById(id);
-        if (question == null) {
-            throw new EntityException("题目不存在");
-        }
-        return question;
+        return questionMapper.findById(id).orElseThrow(() -> new EntityException("题目不存在"));
     }
 
     /**
