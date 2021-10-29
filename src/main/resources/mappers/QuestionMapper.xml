@@ -8,6 +8,13 @@
         <result jdbcType="INTEGER" column="difficulty" javaType="integer" property="difficulty"/>
     </resultMap>
 
+    <resultMap id="userResultMap" type="com.feyon.codeset.entity.UserQuestion">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="INTEGER" column="user_id" javaType="integer" property="userId"/>
+        <result jdbcType="INTEGER" column="question_id" javaType="integer" property="questionId"/>
+        <result jdbcType="INTEGER" column="status" javaType="integer" property="status"/>
+    </resultMap>
+
 
     <insert id="insert" parameterType="com.feyon.codeset.entity.Question" useGeneratedKeys="true" keyProperty="id"
             keyColumn="id">
@@ -53,11 +60,13 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="listAllForUser" resultType="integer">
-        select question_id
+    <select id="listAllForUser" resultMap="userResultMap">
+        select *
         from `user_question`
         where user_id = #{userId}
-          and status = #{status};
+        <if test="status != null">
+            and status = #{status}
+        </if>;
     </select>
 
     <select id="listAllForTag" resultType="integer">

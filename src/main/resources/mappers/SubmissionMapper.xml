@@ -48,6 +48,20 @@
         from `submission`;
     </select>
 
+    <select id="findAllByExample" parameterType="com.feyon.codeset.entity.Submission" resultMap="resultMap">
+        select result, question_id, user_id from `submission`
+        <where>
+            <if test="result != null">
+                and result = #{result}
+            </if>
+            <if test="questionId != null">
+                and question_id = #{questionId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
 
     <select id="countByExample" parameterType="com.feyon.codeset.entity.Submission" resultType="long">
         select count(*) from `submission`

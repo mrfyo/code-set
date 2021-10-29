@@ -19,6 +19,8 @@ public class PageVO<T> implements Iterable<T>{
 
     private Boolean last;
 
+
+
     public PageVO(Long total, List<T> items, Boolean last) {
         this.total = total;
         this.items = items;

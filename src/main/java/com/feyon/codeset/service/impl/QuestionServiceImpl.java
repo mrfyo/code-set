@@ -3,23 +3,24 @@ package com.feyon.codeset.service.impl;
 import com.feyon.codeset.entity.Question;
 import com.feyon.codeset.entity.Solution;
 import com.feyon.codeset.entity.Submission;
+import com.feyon.codeset.entity.UserQuestion;
 import com.feyon.codeset.mapper.QuestionMapper;
 import com.feyon.codeset.mapper.SolutionMapper;
 import com.feyon.codeset.mapper.SubmissionMapper;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
-import com.feyon.codeset.util.NullUtil;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -33,18 +34,16 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final SolutionMapper solutionMapper;
 
-    private PassRateQueryer passRateQueryer;
+    private final PassRateHandler passRateHandler;
 
 
-    public QuestionServiceImpl(QuestionMapper questionMapper, SolutionMapper solutionMapper) {
+    public QuestionServiceImpl(QuestionMapper questionMapper, SolutionMapper solutionMapper, PassRateHandler passRateHandler) {
         this.questionMapper = questionMapper;
         this.solutionMapper = solutionMapper;
+        this.passRateHandler = passRateHandler;
     }
 
-    @Autowired
-    public void setPassRateQueryer(PassRateQueryer passRateQueryer) {
-        this.passRateQueryer = passRateQueryer;
-    }
+
 
 
     /**
@@ -61,22 +60,21 @@ public class QuestionServiceImpl implements QuestionService {
      */
     @Override
     public PageVO<QuestionVO> listAll(QuestionQuery query) {
-        Predicate<Question> filter = QuestionFilter.build()
+        Predicate<Question> filters = QuestionFilter.build()
                 .and(new DifficultyFilter(query))
                 .and(new UserStatusFilter(query))
                 .and(new TagFilter(query));
 
-        List<Question> questions = listAll().stream()
-                .filter(filter)
-                .collect(Collectors.toList());
+        Function<QuestionVO, QuestionVO> workers = QuestionWorker.build()
+                .andThen(new QuestionStatusWorker(query))
+                .andThen(new QuestionPassRateWorker(passRateHandler));
 
+
+        List<Question> questions = listAll().stream().filter(filters).collect(Collectors.toList());
         List<QuestionVO> vos = new ArrayList<>(query.getLimit());
-        for (int i = query.getOffset(); i < questions.size(); i++) {
-            QuestionVO vo = ModelMapperUtil.map(questions.get(i), QuestionVO.class);
-            vo.setStatus(NullUtil.defaultValue(query.getStatus(), 0));
-            vo.setResolutionNum(solutionNumberForQuestion(vo.getQuestionId()));
-            vo.setPassRate(passRateQueryer.query(vo.getQuestionId()));
-            vos.add(vo);
+        int end = query.getOffset() + query.getLimit();
+        for (int i = query.getOffset(); i < end; i++) {
+            vos.add(workers.apply(ModelMapperUtil.map(questions.get(i), QuestionVO.class)));
         }
         return PageVO.of(questions.size(), vos);
     }
@@ -126,7 +124,10 @@ public class QuestionServiceImpl implements QuestionService {
 
         private boolean contains(Question question, QuestionQuery query) {
             if (questionSet == null) {
-                questionSet = questionMapper.listAllForUser(1, query.getStatus());
+                questionSet = questionMapper.listAllForUser(1, query.getStatus())
+                        .stream()
+                        .map(UserQuestion::getQuestionId)
+                        .collect(Collectors.toSet());
             }
             return questionSet.contains(question.getId());
         }
@@ -159,19 +160,67 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     /**
+     * Worker: process `status` in {@link QuestionVO}
+     */
+    public class QuestionStatusWorker implements QuestionWorker {
+
+        private final QuestionQuery query;
+
+        private Map<Integer, Integer> questionStatusMap;
+
+        public QuestionStatusWorker(QuestionQuery query) {
+            this.query = query;
+        }
+
+        @Override
+        public QuestionVO apply(QuestionVO questionVO) {
+            Integer status = ObjectUtils.isEmpty(query.getStatus()) ? findStatus(questionVO.getQuestionId()) : query.getStatus();
+            questionVO.setStatus(status);
+            return questionVO;
+        }
+
+        public Integer findStatus(Integer questionId) {
+            if (questionStatusMap == null) {
+                questionStatusMap = questionMapper.listAllForUser(1, null)
+                        .stream()
+                        .collect(Collectors.toMap(UserQuestion::getQuestionId, UserQuestion::getStatus));
+            }
+            return questionStatusMap.get(questionId);
+        }
+    }
+
+    /**
+     * Worker: Pass Rate
+     */
+    public static class QuestionPassRateWorker implements QuestionWorker {
+
+        final PassRateHandler handler;
+
+        public QuestionPassRateWorker(PassRateHandler handler) {
+            this.handler = handler;
+        }
+
+        @Override
+        public QuestionVO apply(QuestionVO questionVO) {
+            questionVO.setPassRate(handler.handle(questionVO.getQuestionId()));
+            return questionVO;
+        }
+    }
+
+    /**
      * the pass rate of question for user.
      */
     @Component
-    public static class SimplePassRateQueryer implements PassRateQueryer {
+    public static class SimplePassRateHandler implements PassRateHandler {
 
         private final SubmissionMapper submissionMapper;
 
-        public SimplePassRateQueryer(SubmissionMapper submissionMapper) {
+        public SimplePassRateHandler(SubmissionMapper submissionMapper) {
             this.submissionMapper = submissionMapper;
         }
 
         @Override
-        public double query(Integer questionId) {
+        public double handle(Integer questionId) {
             long total = submissionMapper.countByExample(new Submission(null, questionId, null));
             if (total == 0) {
                 return 0;
