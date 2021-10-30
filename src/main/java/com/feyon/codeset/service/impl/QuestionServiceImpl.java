@@ -148,8 +148,9 @@ public class QuestionServiceImpl implements QuestionService {
         List<QuestionVO> vos = new ArrayList<>(query.getLimit());
         List<Integer> questionIds = new ArrayList<>(query.getLimit());
 
+        int start = Math.max(0, query.getOffset());
         int end = Math.min(query.getOffset() + query.getLimit(), questions.size());
-        for (int i = query.getOffset(); i < end; i++) {
+        for (int i = start; i < end; i++) {
             Question question = questions.get(i);
             questionIds.add(question.getId());
             vos.add(ModelMapperUtil.map(question, QuestionVO.class));
