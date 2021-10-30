@@ -18,7 +18,7 @@ class TagServiceTest {
     @Test
     void save() {
         Tag tag = new Tag();
-        tag.setTitle("数学");
+        tag.setName("数学");
         tagService.save(tag);
     }
 
@@ -30,7 +30,7 @@ class TagServiceTest {
     @Test
     void update() {
         Tag tag = new Tag();
-        tag.setTitle("数组2");
+        tag.setName("数组2");
         tagService.update(1, tag);
     }
 

@@ -12,6 +12,6 @@ public class Tag {
     private Integer id;
 
     @NotEmpty
-    private String title;
+    private String name;
 
 }

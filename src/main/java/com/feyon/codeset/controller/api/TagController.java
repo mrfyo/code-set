@@ -4,6 +4,7 @@ import com.feyon.codeset.controller.result.Result;
 import com.feyon.codeset.entity.Tag;
 import com.feyon.codeset.service.TagService;
 import com.feyon.codeset.vo.TagVO;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author Feng Yong
  */
 @RestController
-@RequestMapping("/api/v1/tags")
+@RequestMapping(value = "/api/v1/tags", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TagController {
 
     private final TagService tagService;

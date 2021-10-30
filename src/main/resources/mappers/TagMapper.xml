@@ -3,13 +3,13 @@
 <mapper namespace="com.feyon.codeset.mapper.TagMapper">
     <resultMap id="resultMap" type="com.feyon.codeset.entity.Tag">
         <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
-        <result jdbcType="VARCHAR" column="title" javaType="string" property="title"/>
+        <result jdbcType="VARCHAR" column="name" javaType="string" property="name"/>
     </resultMap>
 
 
     <insert id="insert" parameterType="com.feyon.codeset.entity.Tag" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into `tag`(title)
-        VALUES (#{title});
+        insert into `tag`(name)
+        VALUES (#{name});
     </insert>
 
     <delete id="deleteById" parameterType="integer">
@@ -21,8 +21,8 @@
     <update id="update" parameterType="com.feyon.codeset.entity.Tag">
         update `tag`
         set
-        <if test="title != null">
-            title = #{title}
+        <if test="name != null">
+            name = #{name}
         </if>
         where id = #{id};
     </update>

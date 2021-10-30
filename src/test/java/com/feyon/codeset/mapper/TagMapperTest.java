@@ -21,7 +21,7 @@ class TagMapperTest {
     @Test
     void insert() {
         Tag tag = new Tag();
-        tag.setTitle("动态规划");
+        tag.setName("动态规划");
         assertEquals(1, mapper.insert(tag));
     }
 
@@ -29,7 +29,7 @@ class TagMapperTest {
     void update() {
         var user = mapper.findById(1).orElse(null);
         assertNotNull(user);
-        user.setTitle("双向链表");
+        user.setName("双向链表");
         assertEquals(1, mapper.update(user));
     }
 
@@ -43,7 +43,7 @@ class TagMapperTest {
         var role = mapper.findById(1).orElse(null);
         assertNotNull(role);
         assertEquals(1, role.getId());
-        assertEquals("链表", role.getTitle());
+        assertEquals("链表", role.getName());
     }
 
     @Test

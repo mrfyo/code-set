@@ -10,7 +10,7 @@ public class TagVO {
 
     private Integer tagId;
 
-    private String tagTitle;
+    private String tagName;
 
     private Long questionNum;
 
