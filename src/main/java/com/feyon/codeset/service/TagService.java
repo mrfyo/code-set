@@ -16,8 +16,16 @@ public interface TagService {
      */
     void save(Tag tag);
 
+    /**
+     * update tag
+     * @param tagId tag's id
+     * @param tag tag object.
+     */
     void update(Integer tagId, Tag tag);
-
+    /**
+     * remove tag
+     * @param tagId tag's id
+     */
     void remove(Integer tagId);
 
     /**
@@ -25,4 +33,11 @@ public interface TagService {
      * @return all tag
      */
     List<TagVO> findAll();
+
+    /**
+     * return a tag according to id.
+     * @param tagId tag id
+     * @return a tag
+     */
+    TagVO findOne(Integer tagId);
 }

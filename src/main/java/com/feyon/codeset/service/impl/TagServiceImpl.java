@@ -66,4 +66,13 @@ public class TagServiceImpl implements TagService {
                 .peek(tagVO -> tagVO.setQuestionNum(collect.get(tagVO.getTagId())))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public TagVO findOne(Integer tagId) {
+        Tag tag = findById(tagId);
+        long count = questionTagMapper.countByTagId(tagId);
+        TagVO vo = ModelMapperUtil.map(tag, TagVO.class);
+        vo.setQuestionNum(count);
+        return vo;
+    }
 }
