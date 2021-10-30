@@ -3,14 +3,17 @@ package com.feyon.codeset.controller.api;
 import com.feyon.codeset.controller.result.Result;
 import com.feyon.codeset.entity.Tag;
 import com.feyon.codeset.service.TagService;
+import com.feyon.codeset.vo.TagVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author Feng Yong
  */
 @RestController
+@RequestMapping("/api/v1/tags")
 public class TagController {
 
     private final TagService tagService;
@@ -39,8 +42,15 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public Result findAll(@PathVariable(required = false) Integer id) {
-        return id == null ? Result.success(tagService.findOne(id)) : Result.success(tagService.findAll());
+    public TagVO findById(@PathVariable Integer id) {
+        return tagService.findOne(id);
     }
+
+    @GetMapping
+    public List<TagVO> findAll() {
+        return tagService.findAll();
+    }
+
+
 
 }

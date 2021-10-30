@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.servlet.ServletException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -47,6 +48,14 @@ public class ExceptionControllerAdvice {
             errors.getDetails().add(new ValidationFailResult.Detail(field, message));
         }
         return errors;
+    }
+
+    /**
+     * 拦截 Servlet错误
+     */
+    @ExceptionHandler(ServletException.class)
+    Result onServletException(ServletException e) {
+        return Result.fail(ResultCode.SERVLET_ERROR, e.getMessage());
     }
 
     /**

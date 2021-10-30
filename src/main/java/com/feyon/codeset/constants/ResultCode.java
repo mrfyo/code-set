@@ -9,4 +9,6 @@ public interface ResultCode {
     int VALIDATION_FAIL = 1;
 
     int SYSTEM_ERROR = 2;
+
+    int SERVLET_ERROR = 3;
 }
