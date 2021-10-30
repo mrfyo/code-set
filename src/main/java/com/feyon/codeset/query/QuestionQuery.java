@@ -14,13 +14,12 @@ public class QuestionQuery implements Pageable {
     /**
      * page of table that start from <b>1</b>
      */
-    @Min(1)
     private Integer page = 1;
 
     /**
      * size of table
      */
-    private Integer size = 0;
+    private Integer size = 10;
 
     /**
      * the difficulty of question.

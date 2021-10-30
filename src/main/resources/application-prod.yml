@@ -1,0 +1,21 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: Coder-Set
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/code_set?useSSL=false&characterEncoding=utf-8&serverTimezone=UTC
+    username: coder
+    password: 123456
+mybatis:
+  mapper-locations: classpath:mappers/*xml
+  type-aliases-package: com.feyon.codeset.entity
+
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+    path: /v1/api-docs
+  packages-to-scan: com.feyon.codeset.controller.api
+  paths-to-match: /api/**

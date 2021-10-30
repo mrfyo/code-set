@@ -155,13 +155,14 @@ public class QuestionServiceImpl implements QuestionService {
             questionIds.add(question.getId());
             vos.add(ModelMapperUtil.map(question, QuestionVO.class));
         }
+        if (!vos.isEmpty()) {
+            Consumer<List<QuestionVO>> workers = QuestionWorker.build()
+                    .andThen(new QuestionStatusWorker(query))
+                    .andThen(new QuestionStatisticWorker(questionIds, questionStatisticMapper))
+                    .andThen(new QuestionTagWorker(questionIds));
 
-        Consumer<List<QuestionVO>> workers = QuestionWorker.build()
-                .andThen(new QuestionStatusWorker(query))
-                .andThen(new QuestionStatisticWorker(questionIds, questionStatisticMapper))
-                .andThen(new QuestionTagWorker(questionIds));
-
-        workers.accept(vos);
+            workers.accept(vos);
+        }
         return PageVO.of(questions.size(), vos);
     }
 

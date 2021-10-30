@@ -32,7 +32,7 @@ public class SpringDocConfig {
     public OpenAPI openApi() {
         return new OpenAPI()
                 .info(new Info().title("Code Set API")
-                        .description("code set application")
+                        .description("code set application that like LeetCode")
                         .version("v1.0.1")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")));
     }
