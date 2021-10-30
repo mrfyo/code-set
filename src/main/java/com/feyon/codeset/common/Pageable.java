@@ -7,6 +7,11 @@ import org.springframework.lang.Nullable;
  */
 public interface Pageable {
     /**
+     * the max size of a page.
+     */
+    int MAX_SIZE = 100;
+
+    /**
      * return number of page start from 1.
      *
      * @return number of page.
@@ -30,7 +35,7 @@ public interface Pageable {
     default int getOffset() {
         Integer page = getPage();
         Integer size = getSize();
-        return (page == null ? 0 : page - 1) * (size == null || size > 1000 ? 0 : size);
+        return (page == null ? 0 : page - 1) * (size == null || size > MAX_SIZE ? 0 : size);
     }
 
     /**

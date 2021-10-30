@@ -4,10 +4,9 @@ import com.feyon.codeset.controller.result.Result;
 import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionService;
-import com.feyon.codeset.util.ModelMapperUtil;
-import com.feyon.codeset.util.NullUtil;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,7 +15,7 @@ import javax.validation.Valid;
  * @author Feng Yong
  */
 @RestController
-@RequestMapping("/api/v1/questions")
+@RequestMapping(value = "/api/v1/questions", produces = MediaType.APPLICATION_JSON_VALUE)
 public class QuestionController {
 
     private final QuestionService questionService;

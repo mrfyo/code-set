@@ -19,7 +19,7 @@ public class QuestionQuery implements Pageable {
     /**
      * size of table
      */
-    private Integer size = 10;
+    private Integer size = 20;
 
     /**
      * the difficulty of question.
