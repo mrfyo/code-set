@@ -13,3 +13,16 @@ mybatis:
   type-aliases-package: com.feyon.codeset.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+    path: /v1/api-docs
+  packages-to-scan: com.feyon.codeset.controller.api
+  paths-to-match: /api/**
+
+
+logging:
+  level: info
+  level.web: debug

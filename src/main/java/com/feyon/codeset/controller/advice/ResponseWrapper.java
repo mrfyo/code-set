@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  *
  * @author Feng Yong
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.feyon.codeset")
 public class ResponseWrapper implements ResponseBodyAdvice<Object> {
 
     /**
