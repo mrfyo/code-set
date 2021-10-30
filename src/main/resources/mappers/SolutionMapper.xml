@@ -56,7 +56,9 @@
     </select>
 
     <select id="countByQuestionId" parameterType="integer" resultType="long">
-        select COUNT(*) from solution where question_id = #{questionId};
+        select COUNT(*)
+        from solution
+        where question_id = #{questionId};
     </select>
 
     <select id="countByExample" parameterType="com.feyon.codeset.entity.Solution" resultType="long">
@@ -72,6 +74,25 @@
                 and `user_id` = #{userId}
             </if>
         </where>
+    </select>
+
+    <select id="findAllByExample" resultMap="resultMap">
+        select *
+        from solution
+        <where>
+            <if test="example.title != null">
+                and `title` = #{example.title}
+            </if>
+            <if test="example.questionId != null">
+                and `question_id` = #{example.questionId}
+            </if>
+            <if test="example.userId != null">
+                and `user_id` = #{example.userId}
+            </if>
+        </where>
+        <if test="page != null">
+            limit #{page.limit} offset #{page.offset};
+        </if>
     </select>
 
 </mapper>

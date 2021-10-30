@@ -1,5 +1,6 @@
 package com.feyon.codeset.mapper;
 
+import com.feyon.codeset.common.Pageable;
 import com.feyon.codeset.entity.Question;
 import com.feyon.codeset.entity.Solution;
 import org.junit.jupiter.api.Test;
@@ -57,5 +58,12 @@ class SolutionMapperTest {
         List<Solution> list = mapper.findAll();
         assertTrue(list.size() != 0);
         list.forEach(System.out::println);
+    }
+
+    @Test
+    void findAllByExample() {
+        Solution solution = new Solution();
+        solution.setQuestionId(1);
+        mapper.findAllByExample(solution);
     }
 }
