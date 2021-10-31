@@ -1,6 +1,6 @@
 package com.feyon.codeset.mapper;
 
-import com.feyon.codeset.entity.SubmissionContent;
+import com.feyon.codeset.entity.SubmissionDetail;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class SubmissionContentMapperTest {
 
     @Autowired
-    private SubmissionContentMapper mapper;
+    private SubmissionDetailMapper mapper;
 
     @Test
     void insert() {
-        var submission = new SubmissionContent();
+        var submission = new SubmissionDetail();
         submission.setSubmissionId(1);
         submission.setContent("PASS");
         assertEquals(1, mapper.insert(submission));
@@ -48,7 +48,7 @@ class SubmissionContentMapperTest {
 
     @Test
     void findAll() {
-        List<SubmissionContent> list = mapper.findAll();
+        List<SubmissionDetail> list = mapper.findAll();
         assertTrue(list.size() != 0);
         list.forEach(System.out::println);
     }

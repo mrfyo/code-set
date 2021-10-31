@@ -17,6 +17,8 @@ import java.util.List;
 @Mapper
 public interface QuestionMapper extends BaseMapper<Question> {
 
+    boolean existsById(@Param("id") Integer id);
+
     Question findByNumber(@Param("number") Integer number);
 
     Integer nextNumber();

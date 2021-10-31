@@ -6,7 +6,7 @@ import lombok.Data;
  * @author Feng Yong
  */
 @Data
-public class SubmissionContent {
+public class SubmissionDetail {
 
     private Integer id;
 

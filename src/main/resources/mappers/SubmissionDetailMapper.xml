@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.feyon.codeset.mapper.SubmissionContentMapper">
-    <resultMap id="resultMap" type="com.feyon.codeset.entity.SubmissionContent">
+<mapper namespace="com.feyon.codeset.mapper.SubmissionDetailMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.SubmissionDetail">
         <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
         <result jdbcType="INTEGER" column="submission_id" javaType="integer" property="submissionId"/>
         <result jdbcType="OTHER" column="content" javaType="string" property="content" />
     </resultMap>
 
 
-    <insert id="insert" parameterType="com.feyon.codeset.entity.SubmissionContent" useGeneratedKeys="true" keyProperty="id"
+    <insert id="insert" parameterType="com.feyon.codeset.entity.SubmissionDetail" useGeneratedKeys="true" keyProperty="id"
             keyColumn="id">
-        insert into `submission_content`(submission_id, content)
+        insert into `submission_detail`(submission_id, content)
         VALUES (#{submissionId}, #{content});
     </insert>
 
     <delete id="deleteById" parameterType="integer">
         delete
-        from `submission_content`
+        from `submission_detail`
         where id = #{id};
     </delete>
 
-    <update id="update" parameterType="com.feyon.codeset.entity.SubmissionContent">
-        update `submission_content`
+    <update id="update" parameterType="com.feyon.codeset.entity.SubmissionDetail">
+        update `submission_detail`
         set
         <if test="submissionId != null">
             submission_id = #{submissionId},
@@ -32,12 +32,12 @@
 
     <select id="findById" parameterType="integer" resultMap="resultMap">
         select *
-        from `submission_content`
+        from `submission_detail`
         where id = #{id};
     </select>
 
     <select id="findAllById" resultMap="resultMap">
-        select * from submission_content where id in
+        select * from submission_detail where id in
         <foreach collection="ids" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>;
@@ -45,6 +45,6 @@
 
     <select id="findAll" resultMap="resultMap">
         select *
-        from `submission_content`;
+        from `submission_detail`;
     </select>
 </mapper>

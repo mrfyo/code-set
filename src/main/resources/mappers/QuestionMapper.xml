@@ -65,6 +65,10 @@
         </foreach>;
     </select>
 
+    <select id="existsById" resultType="boolean">
+        select COUNT(id) from question where id = #{id};
+    </select>
+
     <select id="findByNumber" resultMap="resultMap">
         select * from question where question_number = #{number};
     </select>
