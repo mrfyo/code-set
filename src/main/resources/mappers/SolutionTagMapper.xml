@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feyon.codeset.mapper.SolutionTagMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.SolutionTag">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="INTEGER" column="tag_id" javaType="integer" property="tagId" />
+        <result jdbcType="INTEGER" column="solution_id" javaType="integer" property="solutionId"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.SolutionTag" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `solution_tag`(tag_id, solution_id)
+        VALUES (#{tagId}, #{solutionId});
+    </insert>
+
+    <insert id="batchInsert" parameterType="com.feyon.codeset.entity.SolutionTag" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into solution_tag (tag_id, solution_id) VALUES
+        <foreach collection="tags" item="item" separator=",">
+            (#{item.tagId}, #{item.solutionId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `solution_tag`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.SolutionTag">
+        update `solution_tag`
+        set
+        <if test="tagId != null">
+            tag_id = #{tagId},
+        </if>
+        <if test="solutionId != null">
+            solution_id = #{solutionId}
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `solution_tag`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `solution_tag`;
+    </select>
+
+    <select id="findAllById" resultMap="resultMap">
+        select * from solution_tag where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
+    <select id="findBySolutionId" resultMap="resultMap">
+        select * from solution_tag where solution_id = #{solutionId};
+    </select>
+
+    <select id="findAllBySolutionId" resultMap="resultMap">
+        select * from solution_tag where solution_id in
+        <foreach collection="solutionIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
+    <delete id="deleteBySolutionId">
+        delete from solution_tag where solution_id = #{solutionId};
+    </delete>
+
+    <select id="findByTagId" resultMap="resultMap">
+        select * from solution_tag where tag_id = #{tagId}
+    </select>
+
+    <select id="countByTagId" resultType="long">
+        select COUNT(*) from solution_tag where tag_id = #{tagId};
+    </select>
+
+    <delete id="deleteByTagId">
+        delete from solution_tag where tag_id = #{tagId};
+    </delete>
+
+    <select id="findSolutionByTagId" resultType="integer">
+        select solution_id from solution_tag where tag_id in
+        <foreach collection="tagIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
+    <select id="findAllByTagId" resultMap="resultMap">
+        select * from solution_tag where tag_id in
+        <foreach collection="tagIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+</mapper>

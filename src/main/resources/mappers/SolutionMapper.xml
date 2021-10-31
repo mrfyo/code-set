@@ -95,4 +95,20 @@
         </if>
     </select>
 
+    <select id="findAllIdByExample" parameterType="com.feyon.codeset.entity.Solution" resultType="integer">
+        select id
+        from solution
+        <where>
+            <if test="title != null">
+                and `title` = #{example.title}
+            </if>
+            <if test="questionId != null">
+                and `question_id` = #{example.questionId}
+            </if>
+            <if test="userId != null">
+                and `user_id` = #{example.userId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

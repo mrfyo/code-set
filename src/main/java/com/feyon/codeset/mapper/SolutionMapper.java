@@ -17,9 +17,12 @@ public interface SolutionMapper extends BaseMapper<Solution> {
 
     long countByExample(Solution example);
 
+
     List<Solution> findAllByExample(@Param("example") Solution solution, @Param("page") Pageable pageable);
 
     default List<Solution> findAllByExample(Solution solution) {
         return findAllByExample(solution, null);
     }
+
+    List<Integer> findAllIdByExample(Solution example);
 }
