@@ -5,6 +5,7 @@ import com.feyon.codeset.form.SolutionForm;
 import com.feyon.codeset.query.SolutionQuery;
 import com.feyon.codeset.service.SolutionService;
 import com.feyon.codeset.vo.PageVO;
+import com.feyon.codeset.vo.SolutionDetailVO;
 import com.feyon.codeset.vo.SolutionVO;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,8 +43,13 @@ public class SolutionController {
         return Result.success();
     }
 
+    @GetMapping("/{solutionId}")
+    public SolutionDetailVO queryOne(@PathVariable Integer solutionId) {
+        return questionService.findOne(solutionId);
+    }
+
     @GetMapping
-    public PageVO<SolutionVO> querySolution(@Valid SolutionQuery urlQuery, @Valid @RequestBody(required = false) SolutionQuery query) {
+    public PageVO<SolutionVO> querySolutionList(@Valid SolutionQuery urlQuery, @Valid @RequestBody(required = false) SolutionQuery query) {
         return questionService.listAll(query == null ? urlQuery : query);
     }
     

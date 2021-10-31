@@ -10,13 +10,13 @@ import java.util.List;
  * @author Feng Yong
  */
 @Data
-public class SolutionVO {
+public class SolutionDetailVO {
 
     private Integer solutionId;
 
     private String solutionTitle;
 
-    private String solutionSummary;
+    private String solutionContent;
 
     private Integer questionId;
 

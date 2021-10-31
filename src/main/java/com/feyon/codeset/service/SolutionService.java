@@ -3,6 +3,7 @@ package com.feyon.codeset.service;
 import com.feyon.codeset.form.SolutionForm;
 import com.feyon.codeset.query.SolutionQuery;
 import com.feyon.codeset.vo.PageVO;
+import com.feyon.codeset.vo.SolutionDetailVO;
 import com.feyon.codeset.vo.SolutionVO;
 
 /**
@@ -28,6 +29,13 @@ public interface SolutionService {
      * @param solutionId solution ID
      */
     void remove(Integer solutionId);
+
+    /**
+     * return a solution detail.
+     * @param solutionId solution ID
+     * @return a solution detail.
+     */
+    SolutionDetailVO findOne(Integer solutionId);
 
     /**
      * return all solution info.

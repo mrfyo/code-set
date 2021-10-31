@@ -16,6 +16,7 @@ import com.feyon.codeset.query.SolutionQuery;
 import com.feyon.codeset.service.SolutionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.vo.PageVO;
+import com.feyon.codeset.vo.SolutionDetailVO;
 import com.feyon.codeset.vo.SolutionVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +66,7 @@ public class SolutionServiceImpl implements SolutionService {
         solution.setCreateAt(LocalDateTime.now());
         solutionMapper.insert(solution);
 
-        if(ObjectUtil.isNotEmpty(form.getTagIds())) {
+        if (ObjectUtil.isNotEmpty(form.getTagIds())) {
             List<SolutionTag> solutionTags = form.getTagIds().stream()
                     .map(tagId -> new SolutionTag(tagId, solution.getId()))
                     .collect(Collectors.toList());
@@ -119,6 +120,22 @@ public class SolutionServiceImpl implements SolutionService {
         solutionMapper.deleteById(solutionId);
         solutionDetailMapper.deleteById(solutionId);
         solutionTagMapper.deleteBySolutionId(solutionId);
+    }
+
+    @Override
+    public SolutionDetailVO findOne(Integer solutionId) {
+        Solution solution = findById(solutionId);
+        SolutionDetail detail = solutionDetailMapper.findById(solutionId).orElse(new SolutionDetail());
+        List<SolutionTag> solutionTags = solutionTagMapper.findBySolutionId(solutionId);
+
+        SolutionDetailVO vo = ModelMapperUtil.map(solution, SolutionDetailVO.class);
+        vo.setSolutionContent(detail.getContent());
+
+        List<Integer> tagIds = solutionTags.stream()
+                .map(SolutionTag::getTagId)
+                .collect(Collectors.toList());
+        vo.setTags(tagIds.isEmpty() ? List.of() : tagMapper.findAllById(tagIds));
+        return vo;
     }
 
     public Solution findById(Integer id) {
