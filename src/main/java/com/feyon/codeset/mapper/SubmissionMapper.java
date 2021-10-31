@@ -12,7 +12,5 @@ import java.util.List;
 @Mapper
 public interface SubmissionMapper extends BaseMapper<Submission> {
 
-    long countByExample(Submission example);
-
     List<Submission> findAllByExample(Submission example);
 }

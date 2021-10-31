@@ -18,25 +18,35 @@ public class Submission {
      */
     private Integer result;
 
+    /**
+     * @see Question
+     */
     private Integer questionId;
 
+    /**
+     * @see User
+     */
     private Integer userId;
+
+    /**
+     * the time unit is ms.
+     */
+    private Integer timeCost;
+
+    /**
+     * the memory unit is KB.
+     */
+    private Integer memoryCost;
+
+    /**
+     * the submission language like Java, Python3.
+     * @see SubmissionLanguage
+     */
+    private Integer languageId;
 
     private LocalDateTime createAt;
 
     public Submission() {
     }
 
-    public Submission(Integer id, Integer result, Integer questionId, Integer userId) {
-        this.id = id;
-        this.result = result;
-        this.questionId = questionId;
-        this.userId = userId;
-    }
-
-    public Submission(Integer result, Integer questionId, Integer userId) {
-        this.result = result;
-        this.questionId = questionId;
-        this.userId = userId;
-    }
 }

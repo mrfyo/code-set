@@ -6,14 +6,20 @@
         <result jdbcType="TINYINT" column="result" javaType="integer" property="result"/>
         <result jdbcType="INTEGER" column="question_id" javaType="integer" property="questionId"/>
         <result jdbcType="INTEGER" column="user_id" javaType="integer" property="userId"/>
+        <result jdbcType="INTEGER" column="time_cost" javaType="integer" property="timeCost"/>
+        <result jdbcType="INTEGER" column="memory_cost" javaType="integer" property="memoryCost"/>
+        <result jdbcType="INTEGER" column="language_id" javaType="integer" property="languageId"/>
         <result jdbcType="TIMESTAMP" column="create_at" javaType="java.time.LocalDateTime" property="createAt"/>
     </resultMap>
 
+    <sql id="baseSql">
+
+    </sql>
 
     <insert id="insert" parameterType="com.feyon.codeset.entity.Submission" useGeneratedKeys="true" keyProperty="id"
             keyColumn="id">
-        insert into `submission`(result, question_id, user_id, create_at)
-        VALUES (#{result}, #{questionId}, #{userId}, #{createAt});
+        insert into `submission`(result, question_id, user_id, time_cost, memory_cost, language_id, create_at)
+        VALUES (#{result}, #{questionId}, #{userId}, #{timeCost}, #{memoryCost}, #{languageId}, #{createAt});
     </insert>
 
     <delete id="deleteById" parameterType="integer">
@@ -32,7 +38,16 @@
             question_id = #{questionId},
         </if>
         <if test="userId != null">
-            user_id = #{userId}
+            user_id = #{userId},
+        </if>
+        <if test="timeCost != null">
+            time_cost = #{timeCost},
+        </if>
+        <if test="memoryCost != null">
+            memory_cost = #{memoryCost},
+        </if>
+        <if test="languageId != null">
+            language_id = #{languageId}
         </if>
         where id = #{id};
     </update>
@@ -55,11 +70,12 @@
         </foreach>;
     </select>
 
-    <select id="findAllByExample" parameterType="com.feyon.codeset.entity.Submission" resultMap="resultMap">
-        select result, question_id, user_id from `submission`
+    <select id="findAllByExample" resultType="com.feyon.codeset.entity.Submission">
+        select *
+        from submission
         <where>
             <if test="result != null">
-                and result = #{result}
+                and result = #{result},
             </if>
             <if test="questionId != null">
                 and question_id = #{questionId}
@@ -67,20 +83,14 @@
             <if test="userId != null">
                 and user_id = #{userId}
             </if>
-        </where>
-    </select>
-
-    <select id="countByExample" parameterType="com.feyon.codeset.entity.Submission" resultType="long">
-        select count(*) from `submission`
-        <where>
-            <if test="result != null">
-                and result = #{result}
+            <if test="timeCost != null">
+                and time_cost = #{timeCost}
             </if>
-            <if test="questionId != null">
-                and question_id = #{questionId}
+            <if test="memoryCost != null">
+                and memory_cost = #{memoryCost}
             </if>
-            <if test="userId != null">
-                and user_id = #{userId}
+            <if test="languageId != null">
+                and language_id = #{languageId}
             </if>
         </where>
     </select>

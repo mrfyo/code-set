@@ -25,6 +25,9 @@ class SubmissionMapperTest {
         submission.setResult(1);
         submission.setQuestionId(1);
         submission.setUserId(1);
+        submission.setTimeCost(30);
+        submission.setMemoryCost(5000);
+        submission.setLanguageId(2);
         submission.setCreateAt(LocalDateTime.now());
         assertEquals(1, mapper.insert(submission));
     }
@@ -36,6 +39,9 @@ class SubmissionMapperTest {
         submission.setResult(1);
         submission.setQuestionId(2);
         submission.setCreateAt(LocalDateTime.now());
+        submission.setLanguageId(1);
+        submission.setTimeCost(10);
+        submission.setMemoryCost(3000);
         assertEquals(1, mapper.update(submission));
     }
 
@@ -49,7 +55,7 @@ class SubmissionMapperTest {
         var submission = mapper.findById(1).orElse(null);
         System.out.println(submission);
         assertNotNull(submission);
-        assertEquals(2, submission.getResult());
+        assertEquals(1, submission.getResult());
         assertEquals(1, submission.getQuestionId());
         assertNotNull(submission.getCreateAt());
         assertEquals(2021, submission.getCreateAt().getYear());
