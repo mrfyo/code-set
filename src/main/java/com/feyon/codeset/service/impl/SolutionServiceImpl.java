@@ -24,6 +24,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -147,8 +148,13 @@ public class SolutionServiceImpl implements SolutionService {
         List<Integer> tags = query.getTags();
         if (ObjectUtils.isEmpty(tags)) {
             List<Solution> list = findAll(query);
-            List<SolutionVO> vos = ModelMapperUtil.mapList(list, SolutionVO.class);
-            return PageVO.of(vos.size(), vos);
+            List<SolutionVO> vos = new ArrayList<>(query.getLimit());
+            int start = Math.max(0, query.getOffset());
+            int end = Math.min(query.getOffset() + query.getLimit(), list.size());
+            for (int i = start; i < end; i++) {
+                vos.add(ModelMapperUtil.map(list.get(i), SolutionVO.class));
+            }
+            return PageVO.of(list.size(), vos);
         }
         // all solution id that meets tag
         List<SolutionTag> solutionTagList = solutionTagMapper.findAllByTagId(tags);
@@ -162,19 +168,19 @@ public class SolutionServiceImpl implements SolutionService {
         example.setQuestionId(query.getQuestionId());
 
         // all solution ids that meet tags and question.
-        List<Integer> ids = solutionMapper.findAllIdByExample(example)
+        List<Integer> solutionIds = solutionMapper.findAllIdByExample(example)
                 .stream()
                 .filter(solutionIdSet::contains)
                 .collect(Collectors.toList());
 
-        long total = ids.size();
+        long total = solutionIds.size();
 
         // solution id set actually needed
         Set<Integer> activeSolutionIds = new HashSet<>();
         int start = Math.max(0, query.getOffset());
-        int end = Math.min(query.getOffset() + query.getLimit(), ids.size());
+        int end = Math.min(query.getOffset() + query.getLimit(), solutionIds.size());
         for (int i = start; i < end; i++) {
-            activeSolutionIds.add(ids.get(i));
+            activeSolutionIds.add(solutionIds.get(i));
         }
 
         if (activeSolutionIds.isEmpty()) {
@@ -183,7 +189,7 @@ public class SolutionServiceImpl implements SolutionService {
 
         // fetch full solution.
         List<SolutionVO> vos = new ArrayList<>(activeSolutionIds.size());
-        Map<Integer, SolutionVO> voMap = solutionMapper.findAllById(ids)
+        Map<Integer, SolutionVO> voMap = solutionMapper.findAllById(solutionIds)
                 .stream()
                 .map(solution -> ModelMapperUtil.map(solution, SolutionVO.class))
                 .peek(solutionVO -> solutionVO.setTags(new ArrayList<>()))
@@ -205,7 +211,6 @@ public class SolutionServiceImpl implements SolutionService {
             Integer solutionId = solutionTag.getSolutionId();
             voMap.get(solutionId).getTags().add(tagMap.get(tagId));
         });
-
         return PageVO.of(total, vos);
     }
 
@@ -214,4 +219,6 @@ public class SolutionServiceImpl implements SolutionService {
         example.setQuestionId(query.getQuestionId());
         return solutionMapper.findAllByExample(example, query);
     }
+
+
 }
