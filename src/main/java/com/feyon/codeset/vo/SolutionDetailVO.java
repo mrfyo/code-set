@@ -1,28 +1,16 @@
 package com.feyon.codeset.vo;
 
-import com.feyon.codeset.entity.Tag;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author Feng Yong
  */
 @Data
-public class SolutionDetailVO {
-
-    private Integer solutionId;
-
-    private String solutionTitle;
+@EqualsAndHashCode(callSuper = true)
+public class SolutionDetailVO extends SolutionVO{
 
     private String solutionContent;
 
-    private Integer questionId;
-
-    private Integer userId;
-
-    private LocalDateTime createAt;
-
-    private List<Tag> tags;
 }

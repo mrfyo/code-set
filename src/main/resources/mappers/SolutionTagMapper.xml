@@ -67,6 +67,13 @@
         </foreach>;
     </select>
 
+    <select id="findAllTagIdBySolutionId" resultType="integer">
+        select DISTINCT(tag_id) from solution_tag where solution_id in
+        <foreach collection="solutionIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
     <delete id="deleteBySolutionId">
         delete from solution_tag where solution_id = #{solutionId};
     </delete>

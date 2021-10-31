@@ -104,13 +104,13 @@
         from solution
         <where>
             <if test="title != null">
-                and `title` = #{example.title}
+                and `title` = #{title}
             </if>
             <if test="questionId != null">
-                and `question_id` = #{example.questionId}
+                and `question_id` = #{questionId}
             </if>
             <if test="userId != null">
-                and `user_id` = #{example.userId}
+                and `user_id` = #{userId}
             </if>
         </where>
     </select>

@@ -19,6 +19,8 @@ public interface SolutionTagMapper extends BaseMapper<SolutionTag> {
 
     List<SolutionTag> findAllBySolutionId(@Param("solutionIds") Iterable<Integer> solutionIds);
 
+    List<Integer> findAllTagIdBySolutionId(@Param("solutionIds") Iterable<Integer> solutionIds);
+
     int deleteBySolutionId(@Param("solutionId") Integer solutionId);
 
     List<SolutionTag> findByTagId(@Param("tagId") Integer tagId);

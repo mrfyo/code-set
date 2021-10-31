@@ -29,6 +29,8 @@ public class SolutionQuery implements Pageable {
     @NotNull
     private Integer questionId;
 
+    private Integer userId;
+
     /**
      * the tags of question.
      * @see com.feyon.codeset.entity.Tag
