@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feyon.codeset.mapper.SolutionDetailMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.SolutionDetail">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="TEXT" column="content" javaType="string" property="content"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.SolutionDetail" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `solution_detail`(id, content)
+        VALUES (#{id}, #{content});
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `solution_detail`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.SolutionDetail">
+        update `solution_detail`
+        set
+        <if test="content != null">
+            content = #{content}
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `solution_detail`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `solution_detail`;
+    </select>
+
+    <select id="findAllById" resultMap="resultMap">
+        select * from solution_detail where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+</mapper>
