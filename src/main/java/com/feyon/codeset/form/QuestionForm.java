@@ -3,7 +3,7 @@ package com.feyon.codeset.form;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class QuestionForm {
 
-    @NotEmpty
+    @NotBlank
     private String title;
 
     @Range(min = 1, max = 3)

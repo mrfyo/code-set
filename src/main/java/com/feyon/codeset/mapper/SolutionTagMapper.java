@@ -15,11 +15,11 @@ public interface SolutionTagMapper extends BaseMapper<SolutionTag> {
 
     int batchInsert(@Param("tags") List<SolutionTag> tags);
 
-    List<SolutionTag> findBySolutionId(@Param("questionId") Integer questionId);
+    List<SolutionTag> findBySolutionId(@Param("solutionId") Integer solutionId);
 
-    List<SolutionTag> findAllBySolutionId(@Param("questionIds") Iterable<Integer> questionIds);
+    List<SolutionTag> findAllBySolutionId(@Param("solutionIds") Iterable<Integer> solutionIds);
 
-    int deleteBySolutionId(@Param("questionId") Integer questionId);
+    int deleteBySolutionId(@Param("solutionId") Integer solutionId);
 
     List<SolutionTag> findByTagId(@Param("tagId") Integer tagId);
 

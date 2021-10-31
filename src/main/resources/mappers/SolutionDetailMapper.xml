@@ -3,7 +3,7 @@
 <mapper namespace="com.feyon.codeset.mapper.SolutionDetailMapper">
     <resultMap id="resultMap" type="com.feyon.codeset.entity.SolutionDetail">
         <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
-        <result jdbcType="TEXT" column="content" javaType="string" property="content"/>
+        <result jdbcType="OTHER" column="content" javaType="string" property="content"/>
     </resultMap>
 
 

@@ -13,6 +13,8 @@ public class Solution {
 
     private String title;
 
+    private String summary;
+
     private Integer questionId;
 
     private Integer userId;

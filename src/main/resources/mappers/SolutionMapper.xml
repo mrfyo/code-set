@@ -4,6 +4,7 @@
     <resultMap id="resultMap" type="com.feyon.codeset.entity.Solution">
         <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
         <result jdbcType="VARCHAR" column="title" javaType="string" property="title"/>
+        <result jdbcType="VARCHAR" column="summary" javaType="string" property="summary"/>
         <result jdbcType="INTEGER" column="question_id" javaType="integer" property="questionId"/>
         <result jdbcType="INTEGER" column="user_id" javaType="integer" property="userId"/>
         <result jdbcType="TIMESTAMP" column="create_at" javaType="java.time.LocalDateTime" property="createAt"/>
@@ -12,8 +13,8 @@
 
     <insert id="insert" parameterType="com.feyon.codeset.entity.Solution" useGeneratedKeys="true" keyProperty="id"
             keyColumn="id">
-        insert into `solution`(title, question_id, user_id, create_at)
-        VALUES (#{title}, #{questionId}, #{userId}, #{createAt});
+        insert into `solution`(title, summary, question_id, user_id, create_at)
+        VALUES (#{title}, #{summary}, #{questionId}, #{userId}, #{createAt});
     </insert>
 
     <delete id="deleteById" parameterType="integer">
@@ -27,6 +28,9 @@
         set
         <if test="title != null">
             title = #{title},
+        </if>
+        <if test="summary != null">
+            summary = #{summary},
         </if>
         <if test="questionId != null">
             question_id = #{questionId},

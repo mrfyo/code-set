@@ -1,8 +1,14 @@
 package com.feyon.codeset.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.feyon.codeset.entity.Solution;
+import com.feyon.codeset.entity.SolutionDetail;
 import com.feyon.codeset.entity.SolutionTag;
 import com.feyon.codeset.entity.Tag;
+import com.feyon.codeset.exception.AdminException;
+import com.feyon.codeset.exception.EntityException;
+import com.feyon.codeset.form.SolutionForm;
+import com.feyon.codeset.mapper.SolutionDetailMapper;
 import com.feyon.codeset.mapper.SolutionMapper;
 import com.feyon.codeset.mapper.SolutionTagMapper;
 import com.feyon.codeset.mapper.TagMapper;
@@ -12,8 +18,10 @@ import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.SolutionVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,16 +31,98 @@ import java.util.stream.Collectors;
 @Service
 public class SolutionServiceImpl implements SolutionService {
 
+    private final static int SUMMARY_MAX_SIZE = 64;
+
     private final SolutionMapper solutionMapper;
 
     private final SolutionTagMapper solutionTagMapper;
 
+    private final SolutionDetailMapper solutionDetailMapper;
+
     private final TagMapper tagMapper;
 
-    public SolutionServiceImpl(SolutionMapper solutionMapper, SolutionTagMapper solutionTagMapper, TagMapper tagMapper) {
+    public SolutionServiceImpl(SolutionMapper solutionMapper,
+                               SolutionTagMapper solutionTagMapper,
+                               SolutionDetailMapper solutionDetailMapper,
+                               TagMapper tagMapper) {
         this.solutionMapper = solutionMapper;
         this.solutionTagMapper = solutionTagMapper;
+        this.solutionDetailMapper = solutionDetailMapper;
         this.tagMapper = tagMapper;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void save(SolutionForm form) {
+        beforeCheck(form);
+
+        Solution solution = new Solution();
+        solution.setUserId(form.getUserId());
+        solution.setQuestionId(form.getQuestionId());
+        solution.setTitle(form.getTitle());
+        solution.setSummary(generateSummary(form.getContent()));
+        solution.setCreateAt(LocalDateTime.now());
+        solutionMapper.insert(solution);
+
+        if(ObjectUtil.isNotEmpty(form.getTagIds())) {
+            List<SolutionTag> solutionTags = form.getTagIds().stream()
+                    .map(tagId -> new SolutionTag(tagId, solution.getId()))
+                    .collect(Collectors.toList());
+            solutionTagMapper.batchInsert(solutionTags);
+        }
+
+        SolutionDetail detail = new SolutionDetail();
+        detail.setId(solution.getId());
+        detail.setContent(form.getContent());
+        solutionDetailMapper.insert(detail);
+    }
+
+    private void beforeCheck(SolutionForm form) {
+        List<Integer> tagIdList = form.getTagIds();
+        if (ObjectUtil.isNotEmpty(tagIdList) && tagMapper.countById(tagIdList) != tagIdList.size()) {
+            throw new AdminException("包含未知的标签");
+        }
+    }
+
+    @Override
+    public void update(Integer solutionId, SolutionForm form) {
+        beforeCheck(form);
+
+        Solution solution = findById(solutionId);
+        solution.setTitle(form.getTitle());
+        solution.setSummary(generateSummary(form.getContent()));
+        solution.setQuestionId(form.getQuestionId());
+        solutionMapper.update(solution);
+
+        solutionTagMapper.deleteBySolutionId(solutionId);
+        List<SolutionTag> solutionTags = form.getTagIds().stream()
+                .map(tagId -> new SolutionTag(tagId, solution.getId()))
+                .collect(Collectors.toList());
+        solutionTagMapper.batchInsert(solutionTags);
+
+        SolutionDetail detail = new SolutionDetail();
+        detail.setId(solution.getId());
+        detail.setContent(form.getContent());
+        solutionDetailMapper.update(detail);
+
+    }
+
+    private String generateSummary(String content) {
+        return content.substring(0, Math.min(SUMMARY_MAX_SIZE, content.length()));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void remove(Integer solutionId) {
+        findById(solutionId);
+        solutionMapper.deleteById(solutionId);
+        solutionDetailMapper.deleteById(solutionId);
+        solutionTagMapper.deleteBySolutionId(solutionId);
+    }
+
+    public Solution findById(Integer id) {
+        return solutionMapper.findById(id).orElseThrow(() -> new EntityException("题解不存在"));
     }
 
     @Override
