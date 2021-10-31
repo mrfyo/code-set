@@ -2,6 +2,7 @@ package com.feyon.codeset.query;
 
 import com.feyon.codeset.common.Pageable;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -14,11 +15,13 @@ public class QuestionQuery implements Pageable {
     /**
      * page of table that start from <b>1</b>
      */
+    @Min(1)
     private Integer page = 1;
 
     /**
      * size of table
      */
+    @Range(min = 0, max = 100)
     private Integer size = 20;
 
     /**

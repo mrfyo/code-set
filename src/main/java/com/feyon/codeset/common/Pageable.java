@@ -35,7 +35,7 @@ public interface Pageable {
     default int getOffset() {
         Integer page = getPage();
         Integer size = getSize();
-        return (page == null ? 0 : page - 1) * (size == null || size > MAX_SIZE ? 0 : size);
+        return (page == null ? 0 : Math.max(page - 1, 0)) * (size == null || size > MAX_SIZE ? 0 : size);
     }
 
     /**

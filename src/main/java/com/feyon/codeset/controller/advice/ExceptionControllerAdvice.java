@@ -5,6 +5,7 @@ import com.feyon.codeset.constants.ResultCode;
 import com.feyon.codeset.controller.result.ValidationFailResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.ServletException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 /**
  * @author Feng Yong
@@ -34,6 +36,20 @@ public class ExceptionControllerAdvice {
             errors.getDetails().add(new ValidationFailResult.Detail(field, message));
         }
         return errors;
+    }
+
+    /**
+     * 拦截 参数绑定
+     */
+    @ExceptionHandler(BindException.class)
+    Result onBindException(BindException e) {
+        ValidationFailResult result = new ValidationFailResult();
+        e.getBindingResult().getFieldErrors().forEach(error -> {
+            String field = error.getField();
+            String message = error.getDefaultMessage();
+            result.getDetails().add(new ValidationFailResult.Detail(field, message));
+        });
+        return result;
     }
 
     /**

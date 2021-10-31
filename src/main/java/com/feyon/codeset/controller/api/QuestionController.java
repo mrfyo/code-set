@@ -44,7 +44,7 @@ public class QuestionController {
     }
 
     @GetMapping
-    public PageVO<QuestionVO> queryQuestion(QuestionQuery urlQuery, @RequestBody(required = false) QuestionQuery query) {
+    public PageVO<QuestionVO> queryQuestion(@Valid QuestionQuery urlQuery, @Valid @RequestBody(required = false) QuestionQuery query) {
         return questionService.listAll(query == null ? urlQuery : query);
     }
 }
