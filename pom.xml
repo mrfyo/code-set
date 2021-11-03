@@ -54,6 +54,11 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- 对象间映射 -->
         <dependency>
             <groupId>org.modelmapper</groupId>

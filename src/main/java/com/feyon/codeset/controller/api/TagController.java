@@ -1,7 +1,7 @@
 package com.feyon.codeset.controller.api;
 
 import com.feyon.codeset.controller.result.Result;
-import com.feyon.codeset.entity.Tag;
+import com.feyon.codeset.form.TagForm;
 import com.feyon.codeset.service.TagService;
 import com.feyon.codeset.vo.TagVO;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/api/v1/tags", produces = MediaType.APPLICATION_JSON_VALUE)
-public class TagController {
+public class TagController implements TagApi{
 
     private final TagService tagService;
 
@@ -24,15 +24,15 @@ public class TagController {
     }
 
     @PostMapping
-    public Result addTag(@Valid @RequestBody Tag tag) {
+    public Result addTag(@Valid @RequestBody TagForm tag) {
         tagService.save(tag);
         return Result.success();
     }
 
     @DeleteMapping("/{id}")
     public Result editTag(@PathVariable Integer id,
-                          @Valid @RequestBody Tag tag) {
-        tagService.update(id, tag);
+                          @Valid @RequestBody TagForm tagForm) {
+        tagService.update(id, tagForm);
         return Result.success();
     }
 

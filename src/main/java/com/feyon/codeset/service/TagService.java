@@ -1,6 +1,7 @@
 package com.feyon.codeset.service;
 
 import com.feyon.codeset.entity.Tag;
+import com.feyon.codeset.form.TagForm;
 import com.feyon.codeset.vo.TagVO;
 
 import java.util.List;
@@ -12,16 +13,16 @@ public interface TagService {
 
     /**
      * save a tag
-     * @param tag a tag
+     * @param form a tag
      */
-    void save(Tag tag);
+    void save(TagForm form);
 
     /**
      * update tag
      * @param tagId tag's id
-     * @param tag tag object.
+     * @param form tag object.
      */
-    void update(Integer tagId, Tag tag);
+    void update(Integer tagId, TagForm form);
     /**
      * remove tag
      * @param tagId tag's id

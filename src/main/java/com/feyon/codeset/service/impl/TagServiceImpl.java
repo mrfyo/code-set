@@ -4,6 +4,7 @@ import com.feyon.codeset.entity.QuestionTag;
 import com.feyon.codeset.entity.Tag;
 import com.feyon.codeset.exception.CodeSetException;
 import com.feyon.codeset.exception.EntityException;
+import com.feyon.codeset.form.TagForm;
 import com.feyon.codeset.mapper.QuestionTagMapper;
 import com.feyon.codeset.mapper.TagMapper;
 import com.feyon.codeset.service.TagService;
@@ -32,13 +33,16 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void save(Tag tag) {
+    public void save(TagForm form) {
+        Tag tag = new Tag();
+        tag.setName(form.getName());
         tagMapper.insert(tag);
     }
 
     @Override
-    public void update(Integer tagId, Tag tag) {
-        findById(tagId);
+    public void update(Integer tagId, TagForm form) {
+        Tag tag = findById(tagId);
+        tag.setName(form.getName());
         tagMapper.update(tag);
     }
 

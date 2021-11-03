@@ -1,6 +1,7 @@
 package com.feyon.codeset.service;
 
 import com.feyon.codeset.entity.Tag;
+import com.feyon.codeset.form.TagForm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +18,7 @@ class TagServiceTest {
 
     @Test
     void save() {
-        Tag tag = new Tag();
+        TagForm tag = new TagForm();
         tag.setName("数学");
         tagService.save(tag);
     }
@@ -29,7 +30,7 @@ class TagServiceTest {
 
     @Test
     void update() {
-        Tag tag = new Tag();
+        TagForm tag = new TagForm();
         tag.setName("数组2");
         tagService.update(1, tag);
     }
