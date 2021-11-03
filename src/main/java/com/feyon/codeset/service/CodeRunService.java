@@ -13,5 +13,5 @@ public interface CodeRunService {
      * @param code needed to be executed code
      * @return result.
      */
-    CodeRunDTO run(String code);
+    CodeRunDTO run(Integer languageId, String code);
 }

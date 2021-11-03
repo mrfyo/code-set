@@ -45,12 +45,13 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(SubmissionForm form) {
-        submissionLanguageMapper.findById(form.getLanguageId()).orElseThrow(() -> new EntityException("提交语言不存在"));
+        Integer languageId = form.getLanguageId();
+        submissionLanguageMapper.findById(languageId).orElseThrow(() -> new EntityException("提交语言不存在"));
         if (!questionMapper.existsById(form.getQuestionId())) {
             throw new EntityException("问题不存在");
         }
 
-        CodeRunDTO codeRunDTO = runCode(form.getContent());
+        CodeRunDTO codeRunDTO = runCode(languageId, form.getContent());
 
         Submission submission = new Submission();
         submission.setUserId(form.getUserId());
@@ -68,8 +69,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         submissionContentMapper.insert(detail);
     }
 
-    public CodeRunDTO runCode(String code) {
-        return codeRunService.run(code);
+    public CodeRunDTO runCode(Integer languageId, String code) {
+        return codeRunService.run(languageId, code);
     }
 
 
