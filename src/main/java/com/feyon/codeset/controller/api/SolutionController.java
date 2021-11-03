@@ -16,7 +16,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/v1/solutions")
-public class SolutionController {
+public class SolutionController implements SolutionApi{
 
     private final SolutionService questionService;
 

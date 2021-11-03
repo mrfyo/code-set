@@ -16,7 +16,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping(value = "/api/v1/questions", produces = MediaType.APPLICATION_JSON_VALUE)
-public class QuestionController {
+public class QuestionController implements QuestionApi {
 
     private final QuestionService questionService;
 
