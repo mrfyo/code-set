@@ -52,5 +52,17 @@ public class SolutionController implements SolutionApi{
     public PageVO<SolutionVO> querySolutionList(@Valid SolutionQuery urlQuery, @Valid @RequestBody(required = false) SolutionQuery query) {
         return questionService.listAll(query == null ? urlQuery : query);
     }
+
+    @PostMapping("/like/{solutionId}")
+    public Result likeSolution(@PathVariable Integer solutionId) {
+        questionService.like(solutionId);
+        return Result.success();
+    }
+
+    @DeleteMapping("/like/{solutionId}")
+    public Result unlikeSolution(@PathVariable Integer solutionId) {
+        questionService.unlike(solutionId);
+        return Result.success();
+    }
     
 }
