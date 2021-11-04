@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  *
  * @author Feng Yong
  */
-public interface QuestionService {
+public interface QuestionService extends LikeService {
 
     interface QuestionFilter extends Predicate<Integer> {
         /**

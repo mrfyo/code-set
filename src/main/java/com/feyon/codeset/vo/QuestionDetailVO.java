@@ -10,5 +10,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class QuestionDetailVO extends QuestionVO {
 
+    /**
+     * the number meet how many users liked.
+     */
+    private Integer likeNum;
+
     private String questionContent;
 }

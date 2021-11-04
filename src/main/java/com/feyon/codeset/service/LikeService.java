@@ -6,7 +6,7 @@ import org.springframework.lang.NonNull;
 /**
  * @author Feng Yong
  */
-public interface QuestionLikeService {
+public interface LikeService {
 
     /**
      * like a question.

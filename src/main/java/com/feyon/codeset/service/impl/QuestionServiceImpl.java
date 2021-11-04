@@ -8,7 +8,7 @@ import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.mapper.*;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionDetailService;
-import com.feyon.codeset.service.QuestionLikeService;
+import com.feyon.codeset.service.LikeService;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.util.PageUtils;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class QuestionServiceImpl implements QuestionService, QuestionLikeService {
+public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionMapper questionMapper;
 
@@ -393,6 +393,9 @@ public class QuestionServiceImpl implements QuestionService, QuestionLikeService
         }
     }
 
+    /**
+     * Worker: Question Like
+     */
     private class QuestionLikeWorker implements QuestionWorker {
 
         private final List<Integer> questionIds;

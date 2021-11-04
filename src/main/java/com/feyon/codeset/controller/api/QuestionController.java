@@ -3,7 +3,6 @@ package com.feyon.codeset.controller.api;
 import com.feyon.codeset.controller.result.Result;
 import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.query.QuestionQuery;
-import com.feyon.codeset.service.QuestionLikeService;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionDetailVO;
@@ -22,11 +21,8 @@ public class QuestionController implements QuestionApi {
 
     private final QuestionService questionService;
 
-    private final QuestionLikeService questionLikeService;
-
-    public QuestionController(QuestionService questionService, QuestionLikeService questionLikeService) {
+    public QuestionController(QuestionService questionService) {
         this.questionService = questionService;
-        this.questionLikeService = questionLikeService;
     }
 
     @PostMapping
@@ -60,13 +56,13 @@ public class QuestionController implements QuestionApi {
 
     @PostMapping("/like/{questionId}")
     public Result likeQuestion(@PathVariable Integer questionId) {
-        questionLikeService.like(questionId);
+        questionService.like(questionId);
         return Result.success();
     }
 
     @DeleteMapping("/like/{questionId}")
     public Result unlikeQuestion(@PathVariable Integer questionId) {
-        questionLikeService.unlike(questionId);
+        questionService.unlike(questionId);
         return Result.success();
     }
 }
