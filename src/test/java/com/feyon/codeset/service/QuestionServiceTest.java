@@ -22,8 +22,7 @@ class QuestionServiceTest {
     @Test
     void listAll() {
         var query = new QuestionQuery();
-        query.setDifficulty(2);
-        query.setStatus(0);
+        query.setStatus(1);
         query.setPage(1);
         query.setSize(10);
         System.out.println(questionService.listAll(query));

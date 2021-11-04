@@ -8,7 +8,6 @@ import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.mapper.*;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionDetailService;
-import com.feyon.codeset.service.LikeService;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.util.PageUtils;
@@ -44,6 +43,8 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionDetailService questionDetailService;
 
     private final QuestionLikeMapper questionLikeMapper;
+
+    private final SubmissionMapper submissionMapper;
 
 
     @Override
@@ -186,7 +187,7 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         Consumer<QuestionVO> workers = QuestionWorker.build()
-                .andThen(new QuestionStatusWorker())
+                .andThen(new QuestionStatusWorker(questionIds))
                 .andThen(new QuestionStatisticWorker(questionIds))
                 .andThen(new QuestionTagWorker(questionIds));
 
@@ -223,7 +224,8 @@ public class QuestionServiceImpl implements QuestionService {
 
         private final QuestionQuery query;
 
-        private Set<Integer> questionSet;
+
+        private Map<Integer, Integer> questionStatusMap;
 
         public UserStatusFilter(QuestionQuery query) {
             this.query = query;
@@ -232,17 +234,23 @@ public class QuestionServiceImpl implements QuestionService {
         @Override
         public boolean test(Integer questionId) {
             Integer status = query.getStatus();
-            return ObjectUtils.isEmpty(status) || (status == 0 && !contains(questionId, query)) || (status > 0 && contains(questionId, query));
+            return ObjectUtils.isEmpty(status) || contains(questionId, query);
         }
 
         private boolean contains(Integer questionId, QuestionQuery query) {
-            if (questionSet == null) {
-                questionSet = questionMapper.listAllForUser(1, query.getStatus())
-                        .stream()
-                        .map(UserQuestion::getQuestionId)
-                        .collect(Collectors.toSet());
+            if (questionStatusMap == null) {
+                Submission example = new Submission();
+                example.setUserId(UserContext.getUserId());
+                List<Submission> submissions = submissionMapper.findAllByExample(example);
+
+                questionStatusMap = new HashMap<>(16);
+                for (Submission submission : submissions) {
+                    Integer qid = submission.getQuestionId();
+                    Integer result = Math.max(submission.getResult(), questionStatusMap.getOrDefault(qid, 0));
+                    questionStatusMap.put(qid, result);
+                }
             }
-            return questionSet.contains(questionId);
+            return questionStatusMap.getOrDefault(questionId, 0).equals(query.getStatus());
         }
     }
 
@@ -277,7 +285,13 @@ public class QuestionServiceImpl implements QuestionService {
      */
     private class QuestionStatusWorker implements QuestionWorker {
 
+        private final List<Integer> questionIds;
+
         private Map<Integer, Integer> questionStatusMap;
+
+        private QuestionStatusWorker(List<Integer> questionIds) {
+            this.questionIds = questionIds;
+        }
 
         @Override
         public void accept(QuestionVO vo) {
@@ -287,9 +301,14 @@ public class QuestionServiceImpl implements QuestionService {
 
         public Integer findStatus(Integer questionId) {
             if (questionStatusMap == null) {
-                questionStatusMap = questionMapper.listAllForUser(1, null)
-                        .stream()
-                        .collect(Collectors.toMap(UserQuestion::getQuestionId, UserQuestion::getStatus));
+                Integer userId = UserContext.getUserId();
+                List<Submission> submissions = submissionMapper.findAllByUserIdAndQuestionIdList(userId, questionIds);
+                questionStatusMap = new HashMap<>(16);
+                for (Submission submission : submissions) {
+                    Integer qid = submission.getQuestionId();
+                    Integer result = Math.max(submission.getResult(), questionStatusMap.getOrDefault(qid, 0));
+                    questionStatusMap.put(qid, result);
+                }
             }
             return questionStatusMap.getOrDefault(questionId, 0);
         }

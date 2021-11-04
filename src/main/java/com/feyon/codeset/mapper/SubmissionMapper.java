@@ -13,4 +13,6 @@ import java.util.List;
 public interface SubmissionMapper extends BaseMapper<Submission> {
 
     List<Submission> findAllByExample(Submission example);
+
+    List<Submission> findAllByUserIdAndQuestionIdList(@Param("userId") Integer userId, @Param("questionIds") Iterable<Integer> questionIds);
 }

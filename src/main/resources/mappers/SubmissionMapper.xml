@@ -70,7 +70,7 @@
         </foreach>;
     </select>
 
-    <select id="findAllByExample" resultType="com.feyon.codeset.entity.Submission">
+    <select id="findAllByExample" parameterType="com.feyon.codeset.entity.Submission" resultMap="resultMap">
         select *
         from submission
         <where>
@@ -93,6 +93,13 @@
                 and language_id = #{languageId}
             </if>
         </where>
+    </select>
+
+    <select id="findAllByUserIdAndQuestionIdList" resultMap="resultMap">
+        select * from submission where user_id = #{userId} and question_id in
+        <foreach collection="questionIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
     </select>
 
 </mapper>
