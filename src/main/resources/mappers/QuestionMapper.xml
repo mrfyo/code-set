@@ -78,8 +78,23 @@
     </select>
 
 
-    <select id="findByExample" resultMap="resultMap" parameterType="com.feyon.codeset.common.Pageable">
+    <select id="findByExample" resultMap="resultMap" parameterType="com.feyon.codeset.entity.Question">
         select * from question
+        <where>
+            <if test="number != null">
+                and question_number = #{number}
+            </if>
+            <if test="title != null">
+                and title = #{title}
+            </if>
+            <if test="difficulty != null">
+                and difficulty = #{difficulty}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAllIdByExample" resultType="integer" parameterType="com.feyon.codeset.entity.Question">
+        select id from question
         <where>
             <if test="number != null">
                 and question_number = #{number}

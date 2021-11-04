@@ -12,8 +12,10 @@ import com.feyon.codeset.mapper.TagMapper;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
+import com.feyon.codeset.util.PageUtils;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -27,8 +29,8 @@ import java.util.stream.Collectors;
  * @author Feng Yong
  */
 @Service
+@RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService {
-
 
     private final QuestionMapper questionMapper;
 
@@ -38,15 +40,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final TagMapper tagMapper;
 
-    public QuestionServiceImpl(QuestionMapper questionMapper,
-                               QuestionStatisticMapper questionStatisticMapper,
-                               QuestionTagMapper questionTagMapper,
-                               TagMapper tagMapper) {
-        this.questionMapper = questionMapper;
-        this.questionStatisticMapper = questionStatisticMapper;
-        this.questionTagMapper = questionTagMapper;
-        this.tagMapper = tagMapper;
-    }
 
     @Override
     @Transactional(rollbackFor = AdminException.class)
@@ -139,52 +132,41 @@ public class QuestionServiceImpl implements QuestionService {
      */
     @Override
     public PageVO<QuestionVO> listAll(QuestionQuery query) {
-        Predicate<Question> filters = QuestionFilter.build()
-                .and(new DifficultyFilter(query))
+        Predicate<Integer> filters = QuestionFilter.build()
                 .and(new UserStatusFilter(query))
                 .and(new TagFilter(query));
 
-        List<Question> questions = listAll().stream().filter(filters).collect(Collectors.toList());
-        List<QuestionVO> vos = new ArrayList<>(query.getLimit());
-        List<Integer> questionIds = new ArrayList<>(query.getLimit());
+        Question example = new Question();
+        example.setDifficulty(query.getDifficulty());
+        List<Integer> questionIds = questionMapper.findAllIdByExample(example)
+                .stream()
+                .filter(filters)
+                .collect(Collectors.toList());
 
-        int start = Math.max(0, query.getOffset());
-        int end = Math.min(query.getOffset() + query.getLimit(), questions.size());
-        for (int i = start; i < end; i++) {
-            Question question = questions.get(i);
-            questionIds.add(question.getId());
-            vos.add(ModelMapperUtil.map(question, QuestionVO.class));
-        }
-        if (!vos.isEmpty()) {
-            Consumer<List<QuestionVO>> workers = QuestionWorker.build()
-                    .andThen(new QuestionStatusWorker(query))
-                    .andThen(new QuestionStatisticWorker(questionIds, questionStatisticMapper))
-                    .andThen(new QuestionTagWorker(questionIds));
+        long total = questionIds.size();
+        List<Integer> neededIds = PageUtils.selectPage(questionIds, query);
 
-            workers.accept(vos);
+        if(neededIds.isEmpty()) {
+            return PageVO.of(total, List.of());
         }
-        return PageVO.of(questions.size(), vos);
+
+        Consumer<List<QuestionVO>> workers = QuestionWorker.build()
+                .andThen(new QuestionStatusWorker(query))
+                .andThen(new QuestionStatisticWorker(questionIds, questionStatisticMapper))
+                .andThen(new QuestionTagWorker(questionIds));
+
+        List<QuestionVO> vos = questionMapper.findAllById(neededIds)
+                .stream()
+                .map(question -> ModelMapperUtil.map(question, QuestionVO.class))
+                .collect(Collectors.toList());
+
+        workers.accept(vos);
+
+        return PageVO.of(total, vos);
     }
 
     public List<Question> listAll() {
         return questionMapper.findAll();
-    }
-
-    /**
-     * Filter: Question.Difficulty
-     */
-    private static class DifficultyFilter implements QuestionFilter {
-
-        private final QuestionQuery query;
-
-        private DifficultyFilter(QuestionQuery query) {
-            this.query = query;
-        }
-
-        @Override
-        public boolean test(Question question) {
-            return ObjectUtils.isEmpty(query.getDifficulty()) || question.getDifficulty().equals(query.getDifficulty());
-        }
     }
 
     /**
@@ -196,24 +178,24 @@ public class QuestionServiceImpl implements QuestionService {
 
         private Set<Integer> questionSet;
 
-        private UserStatusFilter(QuestionQuery query) {
+        public UserStatusFilter(QuestionQuery query) {
             this.query = query;
         }
 
         @Override
-        public boolean test(Question question) {
+        public boolean test(Integer questionId) {
             Integer status = query.getStatus();
-            return ObjectUtils.isEmpty(status) || (status == 0 && !contains(question, query)) || (status > 0 && contains(question, query));
+            return ObjectUtils.isEmpty(status) || (status == 0 && !contains(questionId, query)) || (status > 0 && contains(questionId, query));
         }
 
-        private boolean contains(Question question, QuestionQuery query) {
+        private boolean contains(Integer questionId, QuestionQuery query) {
             if (questionSet == null) {
                 questionSet = questionMapper.listAllForUser(1, query.getStatus())
                         .stream()
                         .map(UserQuestion::getQuestionId)
                         .collect(Collectors.toSet());
             }
-            return questionSet.contains(question.getId());
+            return questionSet.contains(questionId);
         }
     }
 
@@ -231,15 +213,15 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         @Override
-        public boolean test(Question question) {
-            return ObjectUtils.isEmpty(query.getTags()) || contains(question, query);
+        public boolean test(Integer questionId) {
+            return ObjectUtils.isEmpty(query.getTags()) || contains(questionId, query);
         }
 
-        private boolean contains(Question question, QuestionQuery query) {
+        private boolean contains(Integer questionId, QuestionQuery query) {
             if (questionSet == null) {
                 questionSet = questionTagMapper.findQuestionByTagId(query.getTags());
             }
-            return questionSet.contains(question.getId());
+            return questionSet.contains(questionId);
         }
     }
 

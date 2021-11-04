@@ -18,13 +18,13 @@ import java.util.function.Predicate;
  */
 public interface QuestionService {
 
-    interface QuestionFilter extends Predicate<Question> {
+    interface QuestionFilter extends Predicate<Integer> {
         /**
          * filter builder
          *
          * @return all pass filter.
          */
-        static Predicate<Question> build() {
+        static Predicate<Integer> build() {
             return question -> true;
         }
     }
