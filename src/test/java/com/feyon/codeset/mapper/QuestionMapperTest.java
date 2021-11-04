@@ -55,10 +55,4 @@ class QuestionMapperTest {
         assertTrue(list.size() != 0);
         list.forEach(System.out::println);
     }
-
-    @Test
-    void findAllByPage() {
-        List<Question> questions = mapper.listAllByPage(Pageable.of(2, 2));
-        questions.forEach(System.out::println);
-    }
 }

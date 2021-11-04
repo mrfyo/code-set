@@ -10,7 +10,6 @@ import com.feyon.codeset.mapper.QuestionMapper;
 import com.feyon.codeset.mapper.SubmissionDetailMapper;
 import com.feyon.codeset.mapper.SubmissionLanguageMapper;
 import com.feyon.codeset.mapper.SubmissionMapper;
-import com.feyon.codeset.query.SubmissionQuery;
 import com.feyon.codeset.service.CodeRunService;
 import com.feyon.codeset.service.SubmissionService;
 import com.feyon.codeset.util.ModelMapperUtil;
@@ -75,11 +74,9 @@ public class SubmissionServiceImpl implements SubmissionService {
 
 
     @Override
-    public List<SubmissionVO> listAll(SubmissionQuery query) {
+    public List<SubmissionVO> listAll(Integer questionId) {
         Submission example = new Submission();
-        example.setQuestionId(query.getQuestionId());
-        example.setUserId(query.getUserId());
-        example.setLanguageId(query.getLanguageId());
+        example.setQuestionId(questionId);
         List<Submission> submissions = submissionMapper.findAllByExample(example);
         Set<Integer> langIds = submissions.stream()
                 .map(Submission::getLanguageId)

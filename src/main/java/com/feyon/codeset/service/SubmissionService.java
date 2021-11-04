@@ -19,8 +19,8 @@ public interface SubmissionService {
 
     /**
      * return all {@link SubmissionVO}
-     * @param query {@link SubmissionQuery}
+     * @param questionId question id
      * @return all {@link SubmissionVO}
      */
-    List<SubmissionVO> listAll(SubmissionQuery query);
+    List<SubmissionVO> listAll(Integer questionId);
 }
