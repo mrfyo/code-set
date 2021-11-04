@@ -10,6 +10,7 @@ import com.feyon.codeset.mapper.QuestionStatisticMapper;
 import com.feyon.codeset.mapper.QuestionTagMapper;
 import com.feyon.codeset.mapper.TagMapper;
 import com.feyon.codeset.query.QuestionQuery;
+import com.feyon.codeset.service.QuestionDetailService;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.util.PageUtils;
@@ -39,6 +40,8 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionTagMapper questionTagMapper;
 
     private final TagMapper tagMapper;
+
+    private final QuestionDetailService questionDetailService;
 
 
     @Override
@@ -75,6 +78,11 @@ public class QuestionServiceImpl implements QuestionService {
                 throw new AdminException("新增题目(标签)失败");
             }
         }
+
+        QuestionDetail detail = new QuestionDetail();
+        detail.setId(questionId);
+        detail.setContent(form.getContent());
+        questionDetailService.save(detail);
     }
 
     private void beforeCheck(QuestionForm form) {
@@ -102,6 +110,11 @@ public class QuestionServiceImpl implements QuestionService {
                 .map(tagId -> new QuestionTag(tagId, questionId))
                 .collect(Collectors.toList());
         questionTagMapper.batchInsert(questionTags);
+
+        QuestionDetail detail = new QuestionDetail();
+        detail.setId(questionId);
+        detail.setContent(form.getContent());
+        questionDetailService.updateById(detail);
     }
 
     @Override
@@ -111,12 +124,15 @@ public class QuestionServiceImpl implements QuestionService {
         questionMapper.deleteById(questionId);
         questionTagMapper.deleteByQuestionId(questionId);
         questionStatisticMapper.deleteById(questionId);
+        questionDetailService.removeById(questionId);
     }
 
 
     public Question findById(Integer id) {
         return questionMapper.findById(id).orElseThrow(() -> new EntityException("题目不存在"));
     }
+
+
 
     /**
      * query question according to conditions. <br>

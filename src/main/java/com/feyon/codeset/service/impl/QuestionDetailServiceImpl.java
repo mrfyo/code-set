@@ -26,13 +26,16 @@ public class QuestionDetailServiceImpl implements QuestionDetailService {
 
     @Override
     public void removeById(Integer id) {
-        questionDetailMapper.deleteById(id);
+        if(questionDetailMapper.deleteById(id) != 1) {
+            throw new EntityException("问题详情不存在");
+        }
     }
 
     @Override
-    public void updateById(Integer id, QuestionDetail entity) {
-        entity.setId(id);
-        questionDetailMapper.update(entity);
+    public void updateById(QuestionDetail entity) {
+        if(questionDetailMapper.update(entity) != 1) {
+            throw new EntityException("问题详情不存在");
+        }
     }
 
     @Override
