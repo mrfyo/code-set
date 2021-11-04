@@ -13,4 +13,6 @@ import java.util.List;
 public interface QuestionLikeMapper extends BaseMapper<QuestionLike>{
 
     List<QuestionLike> findAllByQuestionId(@Param("questionIds") Iterable<Integer> questionIds);
+
+    int deleteByQuestionIdAndUserId(@Param("questionId") Integer questionId, @Param("userId") Integer userId);
 }

@@ -56,4 +56,8 @@
         </foreach>;
     </select>
 
+    <delete id="deleteByQuestionIdAndUserId">
+        delete from question_like where question_id = #{questionId} and user_id = #{userId};
+    </delete>
+
 </mapper>

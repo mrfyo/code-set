@@ -8,9 +8,11 @@ import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.mapper.*;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionDetailService;
+import com.feyon.codeset.service.QuestionLikeService;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.util.PageUtils;
+import com.feyon.codeset.util.UserContext;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionDetailVO;
 import com.feyon.codeset.vo.QuestionVO;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class QuestionServiceImpl implements QuestionService {
+public class QuestionServiceImpl implements QuestionService, QuestionLikeService {
 
     private final QuestionMapper questionMapper;
 
@@ -196,6 +198,22 @@ public class QuestionServiceImpl implements QuestionService {
 
 
         return PageVO.of(total, vos);
+    }
+
+    @Override
+    public void like(Integer questionId) {
+        findById(questionId);
+        Integer userId = UserContext.getUserId();
+        QuestionLike entity = new QuestionLike();
+        entity.setQuestionId(questionId);
+        entity.setUserId(userId);
+        questionLikeMapper.insert(entity);
+    }
+
+    @Override
+    public void unlike(Integer questionId) {
+        Integer userId = UserContext.getUserId();
+        questionLikeMapper.deleteByQuestionIdAndUserId(questionId, userId);
     }
 
     /**
