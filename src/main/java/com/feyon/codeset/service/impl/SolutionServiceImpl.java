@@ -5,14 +5,12 @@ import com.feyon.codeset.entity.*;
 import com.feyon.codeset.exception.AdminException;
 import com.feyon.codeset.exception.EntityException;
 import com.feyon.codeset.form.SolutionForm;
-import com.feyon.codeset.mapper.SolutionDetailMapper;
-import com.feyon.codeset.mapper.SolutionMapper;
-import com.feyon.codeset.mapper.SolutionTagMapper;
-import com.feyon.codeset.mapper.TagMapper;
+import com.feyon.codeset.mapper.*;
 import com.feyon.codeset.query.SolutionQuery;
 import com.feyon.codeset.service.SolutionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.util.PageUtils;
+import com.feyon.codeset.util.UserContext;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.SolutionDetailVO;
 import com.feyon.codeset.vo.SolutionVO;
@@ -43,6 +41,8 @@ public class SolutionServiceImpl implements SolutionService {
     private final SolutionDetailMapper solutionDetailMapper;
 
     private final TagMapper tagMapper;
+
+    private final SolutionLikeMapper solutionLikeMapper;
 
 
     @Override
@@ -121,9 +121,10 @@ public class SolutionServiceImpl implements SolutionService {
 
         SolutionDetailVO vo = ModelMapperUtil.map(solution, SolutionDetailVO.class);
         vo.setSolutionContent(detail.getContent());
-
-        Consumer<SolutionVO> workers = new SolutionTagWorker(List.of(solutionId));
-        workers.accept(vo);
+        List<Integer> solutionIds = List.of(solutionId);
+        new SolutionTagWorker(solutionIds)
+                .andThen(new SolutionLikeWorker(solutionIds))
+                .accept(vo);
         return vo;
     }
 
@@ -147,7 +148,8 @@ public class SolutionServiceImpl implements SolutionService {
         long total = solutionIdList.size();
         List<Integer> neededSolutionIds = PageUtils.selectPage(solutionIdList, query);
 
-        Consumer<SolutionVO> workers = new SolutionTagWorker(neededSolutionIds);
+        Consumer<SolutionVO> workers = new SolutionTagWorker(neededSolutionIds)
+                .andThen(new SolutionLikeWorker(neededSolutionIds));
 
         List<SolutionVO> vos = solutionMapper.findAllById(neededSolutionIds)
                 .stream()
@@ -156,6 +158,21 @@ public class SolutionServiceImpl implements SolutionService {
                 .collect(Collectors.toList());
 
         return PageVO.of(total, vos);
+    }
+
+    @Override
+    public void like(Integer solutionId) {
+        Integer userId = UserContext.getUserId();
+        SolutionLike like = new SolutionLike();
+        like.setSolutionId(solutionId);
+        like.setUserId(userId);
+        solutionLikeMapper.insert(like);
+    }
+
+    @Override
+    public void unlike(Integer solutionId) {
+        Integer userId = UserContext.getUserId();
+        solutionLikeMapper.deleteBySolutionIdAndUserId(solutionId, userId);
     }
 
     /**
@@ -203,6 +220,13 @@ public class SolutionServiceImpl implements SolutionService {
 
         @Override
         public void accept(SolutionVO solutionVO) {
+            if(solutionIds.size() <= 1) {
+                List<Integer> tagIds = solutionTagMapper.findAllTagIdBySolutionId(solutionIds);
+                List<Tag> tags = tagMapper.findAllById(tagIds);
+                solutionVO.setTags(tags);
+                return;
+            }
+
             if (tags == null) {
                 List<SolutionTag> solutionTags = solutionTagMapper.findAllBySolutionId(solutionIds);
                 Set<Integer> tagIds = new HashSet<>();
@@ -237,6 +261,49 @@ public class SolutionServiceImpl implements SolutionService {
                     }
                 }
                 solutionVO.setTags(tagList);
+            }
+        }
+    }
+
+    public class SolutionLikeWorker implements Consumer<SolutionVO> {
+
+        private final List<Integer> solutionIds;
+
+        private Map<Integer, List<SolutionLike>> map;
+
+        public SolutionLikeWorker(List<Integer> solutionIds) {
+            this.solutionIds = solutionIds;
+        }
+
+        @Override
+        public void accept(SolutionVO vo) {
+            vo.setLiked(false);
+            vo.setLikeNum(0);
+            if(solutionIds.size() <= 1) {
+                List<SolutionLike> list = solutionLikeMapper.findAllBySolutionId(solutionIds);
+                vo.setLikeNum(list.size());
+                for (SolutionLike solutionLike : list) {
+                    if (solutionLike.getSolutionId().equals(vo.getSolutionId())) {
+                        vo.setLiked(true);
+                        break;
+                    }
+                }
+                return;
+            }
+            if(map == null) {
+                map = solutionLikeMapper.findAllBySolutionId(solutionIds)
+                        .stream()
+                        .collect(Collectors.groupingBy(SolutionLike::getSolutionId));
+            }
+            List<SolutionLike> likeList = map.get(vo.getSolutionId());
+            if(likeList != null) {
+                vo.setLikeNum(likeList.size());
+                for (SolutionLike solutionLike : likeList) {
+                    if(solutionLike.getSolutionId().equals(vo.getSolutionId())) {
+                        vo.setLiked(true);
+                        break;
+                    }
+                }
             }
         }
     }

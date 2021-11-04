@@ -25,4 +25,8 @@ public class SolutionVO {
     private LocalDateTime createAt;
 
     private List<Tag> tags;
+
+    private Integer likeNum;
+
+    private Boolean liked;
 }

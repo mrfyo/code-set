@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feyon.codeset.mapper.SolutionLikeMapper">
+    <resultMap id="resultMap" type="com.feyon.codeset.entity.SolutionLike">
+        <id jdbcType="INTEGER" column="id" javaType="integer" property="id"/>
+        <result jdbcType="INTEGER" column="solution_id" javaType="integer" property="solutionId"/>
+        <result jdbcType="INTEGER" column="user_id" javaType="integer" property="userId"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.feyon.codeset.entity.SolutionLike" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `solution_like`(solution_id, user_id)
+        VALUES (#{solutionId}, #{userId});
+    </insert>
+
+    <delete id="deleteById" parameterType="integer">
+        delete
+        from `solution_like`
+        where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.feyon.codeset.entity.SolutionLike">
+        update `solution_like`
+        set
+        <if test="solutionId != null">
+            solution_id = #{solutionId},
+        </if>
+        <if test="userId != null">
+            user_id = #{userId}
+        </if>
+        where id = #{id};
+    </update>
+
+    <select id="findById" parameterType="integer" resultMap="resultMap">
+        select *
+        from `solution_like`
+        where id = #{id};
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select *
+        from `solution_like`;
+    </select>
+
+    <select id="findAllById" resultMap="resultMap">
+        select * from solution_like where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
+    <select id="findAllBySolutionId" resultMap="resultMap">
+        select * from solution_like where solution_id in
+        <foreach collection="solutionIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
+    <delete id="deleteBySolutionIdAndUserId">
+        delete from solution_like where solution_id = #{solutionId} and user_id = #{userId};
+    </delete>
+
+</mapper>

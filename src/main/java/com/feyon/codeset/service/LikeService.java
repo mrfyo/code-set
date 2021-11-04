@@ -10,13 +10,13 @@ public interface LikeService {
 
     /**
      * like a question.
-     * @param questionId question id.
+     * @param resourceId question id.
      */
-    void like(@NonNull Integer questionId);
+    void like(@NonNull Integer resourceId);
 
     /**
      * unlike or cancel a question.
-     * @param questionId question id
+     * @param resourceId question id
      */
-    void unlike(@NonNull Integer questionId);
+    void unlike(@NonNull Integer resourceId);
 }

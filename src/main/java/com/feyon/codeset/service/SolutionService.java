@@ -9,7 +9,7 @@ import com.feyon.codeset.vo.SolutionVO;
 /**
  * @author Feng Yong
  */
-public interface SolutionService {
+public interface SolutionService extends LikeService{
 
     /**
      * save a solution
