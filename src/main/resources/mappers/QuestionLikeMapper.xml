@@ -48,4 +48,12 @@
             #{item}
         </foreach>;
     </select>
+
+    <select id="findAllByQuestionId" resultMap="resultMap">
+        select * from question_like where question_id in
+        <foreach collection="questionIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
 </mapper>

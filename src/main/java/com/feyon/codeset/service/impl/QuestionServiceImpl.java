@@ -5,10 +5,7 @@ import com.feyon.codeset.entity.*;
 import com.feyon.codeset.exception.AdminException;
 import com.feyon.codeset.exception.EntityException;
 import com.feyon.codeset.form.QuestionForm;
-import com.feyon.codeset.mapper.QuestionMapper;
-import com.feyon.codeset.mapper.QuestionStatisticMapper;
-import com.feyon.codeset.mapper.QuestionTagMapper;
-import com.feyon.codeset.mapper.TagMapper;
+import com.feyon.codeset.mapper.*;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionDetailService;
 import com.feyon.codeset.service.QuestionService;
@@ -43,6 +40,8 @@ public class QuestionServiceImpl implements QuestionService {
     private final TagMapper tagMapper;
 
     private final QuestionDetailService questionDetailService;
+
+    private final QuestionLikeMapper questionLikeMapper;
 
 
     @Override
@@ -139,7 +138,8 @@ public class QuestionServiceImpl implements QuestionService {
         List<Integer> questionIds = List.of(questionId);
         Consumer<QuestionVO> workers = QuestionWorker.build()
                 .andThen(new QuestionStatisticWorker(questionIds))
-                .andThen(new QuestionTagWorker(questionIds));
+                .andThen(new QuestionTagWorker(questionIds))
+                .andThen(new QuestionLikeWorker(questionIds));
 
         workers.accept(vo);
         return vo;
@@ -361,6 +361,34 @@ public class QuestionServiceImpl implements QuestionService {
                     list.add(tagMap.get(id));
                 }
                 vo.setTags(list);
+            }
+        }
+    }
+
+    private class QuestionLikeWorker implements QuestionWorker {
+
+        private final List<Integer> questionIds;
+
+        private Map<Integer, List<QuestionLike>> questionLikeMap;
+
+        private QuestionLikeWorker(List<Integer> questionIds) {
+            this.questionIds = questionIds;
+        }
+
+
+        @Override
+        public void accept(QuestionVO vo) {
+            if(questionIds.size() == 1) {
+                int num = questionLikeMapper.findAllByQuestionId(questionIds).size();
+                vo.setLikeNum(num);
+            }else {
+                if(questionLikeMap == null) {
+                    questionLikeMap = questionLikeMapper.findAllByQuestionId(questionIds)
+                            .stream()
+                            .collect(Collectors.groupingBy(QuestionLike::getQuestionId));
+                }
+                List<QuestionLike> likes = questionLikeMap.get(vo.getQuestionId());
+                vo.setLikeNum(likes == null ? 0 : likes.size());
             }
         }
     }

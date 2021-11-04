@@ -41,14 +41,6 @@ public interface QuestionService {
     }
 
     /**
-     * return all {@link QuestionVO} that meet all conditions from user.
-     *
-     * @param query {@link QuestionQuery}
-     * @return all question that meet all conditions from user.
-     */
-    PageVO<QuestionVO> listAll(QuestionQuery query);
-
-    /**
      * save a question.
      *
      * @param form question form.
@@ -76,4 +68,12 @@ public interface QuestionService {
      * @return a question detail
      */
     QuestionDetailVO findOne(Integer questionId);
+
+    /**
+     * return all {@link QuestionVO} that meet all conditions from user.
+     *
+     * @param query {@link QuestionQuery}
+     * @return all question that meet all conditions from user.
+     */
+    PageVO<QuestionVO> listAll(QuestionQuery query);
 }
