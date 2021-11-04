@@ -15,5 +15,10 @@ public class QuestionDetailVO extends QuestionVO {
      */
     private Integer likeNum;
 
+    /**
+     * is or not like this question.
+     */
+    private Boolean liked;
+
     private String questionContent;
 }

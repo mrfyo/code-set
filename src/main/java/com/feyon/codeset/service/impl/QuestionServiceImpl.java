@@ -138,19 +138,19 @@ public class QuestionServiceImpl implements QuestionService {
         vo.setQuestionContent(detail.getContent());
 
         List<Integer> questionIds = List.of(questionId);
-        Consumer<QuestionVO> workers = QuestionWorker.build()
+        QuestionWorker.build()
                 .andThen(new QuestionStatisticWorker(questionIds))
                 .andThen(new QuestionTagWorker(questionIds))
-                .andThen(new QuestionLikeWorker(questionIds));
+                .accept(vo);
 
-        workers.accept(vo);
+        new QuestionLikeWorker(questionId).accept(vo);
+
         return vo;
     }
 
     public Question findById(Integer id) {
         return questionMapper.findById(id).orElseThrow(() -> new EntityException("题目不存在"));
     }
-
 
 
     /**
@@ -181,7 +181,7 @@ public class QuestionServiceImpl implements QuestionService {
         long total = questionIds.size();
         List<Integer> neededIds = PageUtils.selectPage(questionIds, query);
 
-        if(neededIds.isEmpty()) {
+        if (neededIds.isEmpty()) {
             return PageVO.of(total, List.of());
         }
 
@@ -297,7 +297,7 @@ public class QuestionServiceImpl implements QuestionService {
                         .stream()
                         .collect(Collectors.toMap(UserQuestion::getQuestionId, UserQuestion::getStatus));
             }
-            return questionStatusMap.get(questionId);
+            return questionStatusMap.getOrDefault(questionId, 0);
         }
     }
 
@@ -316,7 +316,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         @Override
         public void accept(QuestionVO vo) {
-            if(statistics == null) {
+            if (statistics == null) {
                 statistics = questionStatisticMapper.findAllById(questionIds);
             }
             for (QuestionStatistic stat : statistics) {
@@ -347,7 +347,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         @Override
         public void accept(QuestionVO vo) {
-            if(questionIds.size() <= 1) {
+            if (questionIds.size() <= 1) {
                 List<Integer> ids = questionTagMapper.findAllByQuestionId(questionIds)
                         .stream()
                         .map(QuestionTag::getTagId)
@@ -357,7 +357,7 @@ public class QuestionServiceImpl implements QuestionService {
                 vo.setTags(tagList);
                 return;
             }
-            if(tagMap == null) {
+            if (tagMap == null) {
                 Set<Integer> tagIdSet = new HashSet<>();
                 Map<Integer, List<Integer>> map = new HashMap<>(questionIds.size());
                 List<QuestionTag> questionTags = questionTagMapper.findAllByQuestionId(questionIds);
@@ -367,11 +367,11 @@ public class QuestionServiceImpl implements QuestionService {
                     Integer tid = questionTag.getTagId();
 
                     List<Integer> list = map.get(qid);
-                    if(list == null) {
+                    if (list == null) {
                         List<Integer> ids = new ArrayList<>();
                         ids.add(tid);
                         map.put(qid, ids);
-                    }else {
+                    } else {
                         list.add(tid);
                     }
                     tagIdSet.add(tid);
@@ -383,12 +383,14 @@ public class QuestionServiceImpl implements QuestionService {
             }
 
             List<Integer> tagIds = questionTagMap.get(vo.getQuestionId());
-            if(tagIds != null) {
+            if (tagIds != null) {
                 List<Tag> list = new ArrayList<>(tagIds.size());
                 for (Integer id : tagIds) {
                     list.add(tagMap.get(id));
                 }
                 vo.setTags(list);
+            } else {
+                vo.setTags(List.of());
             }
         }
     }
@@ -396,30 +398,24 @@ public class QuestionServiceImpl implements QuestionService {
     /**
      * Worker: Question Like
      */
-    private class QuestionLikeWorker implements QuestionWorker {
+    private class QuestionLikeWorker implements Consumer<QuestionDetailVO> {
 
-        private final List<Integer> questionIds;
+        private final Integer questionId;
 
-        private Map<Integer, List<QuestionLike>> questionLikeMap;
-
-        private QuestionLikeWorker(List<Integer> questionIds) {
-            this.questionIds = questionIds;
+        private QuestionLikeWorker(Integer questionId) {
+            this.questionId = questionId;
         }
 
-
         @Override
-        public void accept(QuestionVO vo) {
-            if(questionIds.size() == 1) {
-                int num = questionLikeMapper.findAllByQuestionId(questionIds).size();
-                vo.setLikeNum(num);
-            }else {
-                if(questionLikeMap == null) {
-                    questionLikeMap = questionLikeMapper.findAllByQuestionId(questionIds)
-                            .stream()
-                            .collect(Collectors.groupingBy(QuestionLike::getQuestionId));
+        public void accept(QuestionDetailVO vo) {
+            Integer userId = UserContext.getUserId();
+            List<QuestionLike> list = questionLikeMapper.findAllByQuestionId(List.of(questionId));
+            vo.setLikeNum(list.size());
+            vo.setLiked(false);
+            for (QuestionLike like : list) {
+                if (like.getUserId().equals(userId)) {
+                    vo.setLiked(true);
                 }
-                List<QuestionLike> likes = questionLikeMap.get(vo.getQuestionId());
-                vo.setLikeNum(likes == null ? 0 : likes.size());
             }
         }
     }

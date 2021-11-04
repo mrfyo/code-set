@@ -63,9 +63,4 @@ public class QuestionVO {
      * Note. this number is not belong to current user but all users.
      */
     private Long failSubmission;
-
-    /**
-     * the number meet how many users liked.
-     */
-    private Integer likeNum;
 }
