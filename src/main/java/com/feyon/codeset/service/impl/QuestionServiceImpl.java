@@ -329,6 +329,16 @@ public class QuestionServiceImpl implements QuestionService {
 
         @Override
         public void accept(QuestionVO vo) {
+            if(questionIds.size() <= 1) {
+                List<Integer> ids = questionTagMapper.findAllByQuestionId(questionIds)
+                        .stream()
+                        .map(QuestionTag::getTagId)
+                        .collect(Collectors.toList());
+
+                List<Tag> tagList = tagMapper.findAllById(ids);
+                vo.setTags(tagList);
+                return;
+            }
             if(tagMap == null) {
                 Set<Integer> tagIdSet = new HashSet<>();
                 Map<Integer, List<Integer>> map = new HashMap<>(questionIds.size());

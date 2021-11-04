@@ -20,5 +20,6 @@ public class QuestionForm {
 
     private List<Integer> tagIdList;
 
+    @NotBlank
     private String content;
 }

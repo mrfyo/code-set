@@ -2,6 +2,7 @@ package com.feyon.codeset.service;
 
 import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.query.QuestionQuery;
+import com.feyon.codeset.vo.QuestionDetailVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,12 @@ class QuestionServiceTest {
         query.setPage(1);
         query.setSize(10);
         System.out.println(questionService.listAll(query));
+    }
+
+    @Test
+    void findOne() {
+        QuestionDetailVO vo = questionService.findOne(1);
+        System.out.println(vo);
     }
 
     @Test
