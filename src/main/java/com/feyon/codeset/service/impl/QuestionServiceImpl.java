@@ -150,23 +150,19 @@ public class QuestionServiceImpl implements QuestionService {
             return PageVO.of(total, List.of());
         }
 
-        Consumer<List<QuestionVO>> workers = QuestionWorker.build()
+        Consumer<QuestionVO> workers = QuestionWorker.build()
                 .andThen(new QuestionStatusWorker(query))
-                .andThen(new QuestionStatisticWorker(questionIds, questionStatisticMapper))
+                .andThen(new QuestionStatisticWorker(questionIds))
                 .andThen(new QuestionTagWorker(questionIds));
 
         List<QuestionVO> vos = questionMapper.findAllById(neededIds)
                 .stream()
                 .map(question -> ModelMapperUtil.map(question, QuestionVO.class))
+                .peek(workers)
                 .collect(Collectors.toList());
 
-        workers.accept(vos);
 
         return PageVO.of(total, vos);
-    }
-
-    public List<Question> listAll() {
-        return questionMapper.findAll();
     }
 
     /**
@@ -239,11 +235,9 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         @Override
-        public void accept(List<QuestionVO> vos) {
-            for (QuestionVO vo : vos) {
-                Integer status = ObjectUtils.isEmpty(query.getStatus()) ? findStatus(vo.getQuestionId()) : query.getStatus();
-                vo.setStatus(status);
-            }
+        public void accept(QuestionVO vo) {
+            Integer status = ObjectUtils.isEmpty(query.getStatus()) ? findStatus(vo.getQuestionId()) : query.getStatus();
+            vo.setStatus(status);
         }
 
         public Integer findStatus(Integer questionId) {
@@ -259,39 +253,27 @@ public class QuestionServiceImpl implements QuestionService {
     /**
      * Worker: Statistics
      */
-    private static class QuestionStatisticWorker implements QuestionWorker {
-        private final QuestionStatisticMapper mapper;
+    private class QuestionStatisticWorker implements QuestionWorker {
 
         private final List<Integer> questionIds;
 
+        private List<QuestionStatistic> statistics;
 
-        public QuestionStatisticWorker(List<Integer> questionIds, QuestionStatisticMapper mapper) {
+        public QuestionStatisticWorker(List<Integer> questionIds) {
             this.questionIds = questionIds;
-            this.mapper = mapper;
         }
 
         @Override
-        public void accept(List<QuestionVO> vos) {
-            final int threshold = 100;
-            List<QuestionStatistic> statistics = mapper.findAllById(questionIds);
-            if (vos.size() <= threshold) {
-                for (QuestionVO vo : vos) {
-                    for (QuestionStatistic stat : statistics) {
-                        if (stat.getId().equals(vo.getQuestionId())) {
-                            vo.setResolutionNum(stat.getSolution());
-                            vo.setPassRate(stat.getPassRate());
-                            break;
-                        }
-                    }
-                }
-            } else {
-                Map<Integer, QuestionStatistic> map = new HashMap<>(statistics.size());
-                statistics.forEach(stat -> map.put(stat.getId(), stat));
-                vos.forEach(vo -> {
-                    QuestionStatistic stat = map.get(vo.getQuestionId());
+        public void accept(QuestionVO vo) {
+            if(statistics == null) {
+                statistics = questionStatisticMapper.findAllById(questionIds);
+            }
+            for (QuestionStatistic stat : statistics) {
+                if (stat.getId().equals(vo.getQuestionId())) {
                     vo.setResolutionNum(stat.getSolution());
                     vo.setPassRate(stat.getPassRate());
-                });
+                    break;
+                }
             }
         }
     }
@@ -303,31 +285,48 @@ public class QuestionServiceImpl implements QuestionService {
 
         private final List<Integer> questionIds;
 
+        private Map<Integer, Tag> tagMap;
+
+        private Map<Integer, List<Integer>> questionTagMap;
+
         private QuestionTagWorker(List<Integer> questionIds) {
             this.questionIds = questionIds;
         }
 
         @Override
-        public void accept(List<QuestionVO> vos) {
+        public void accept(QuestionVO vo) {
+            if(tagMap == null) {
+                Set<Integer> tagIdSet = new HashSet<>();
+                Map<Integer, List<Integer>> map = new HashMap<>(questionIds.size());
+                List<QuestionTag> questionTags = questionTagMapper.findAllByQuestionId(questionIds);
 
-            Map<Integer, QuestionVO> voMap = vos
-                    .stream()
-                    .peek(questionVO -> questionVO.setTags(new ArrayList<>()))
-                    .collect(Collectors.toMap(QuestionVO::getQuestionId, questionVO -> questionVO));
+                for (QuestionTag questionTag : questionTags) {
+                    Integer qid = questionTag.getQuestionId();
+                    Integer tid = questionTag.getTagId();
 
-            List<QuestionTag> questionTags = questionTagMapper.findAllByQuestionId(questionIds);
+                    List<Integer> list = map.get(qid);
+                    if(list == null) {
+                        List<Integer> ids = new ArrayList<>();
+                        ids.add(tid);
+                        map.put(qid, ids);
+                    }else {
+                        list.add(tid);
+                    }
+                    tagIdSet.add(tid);
+                }
+                this.questionTagMap = map;
+                this.tagMap = tagMapper.findAllById(tagIdSet)
+                        .stream()
+                        .collect(Collectors.toMap(Tag::getId, tag -> tag));
+            }
 
-            Set<Integer> tagIds = new HashSet<>();
-            questionTags.forEach(questionTag -> tagIds.add(questionTag.getTagId()));
-
-            Map<Integer, Tag> tagMap = tagMapper.findAllById(tagIds)
-                    .stream()
-                    .collect(Collectors.toMap(Tag::getId, tag -> tag));
-
-            for (QuestionTag questionTag : questionTags) {
-                Integer tagId = questionTag.getTagId();
-                Integer questionId = questionTag.getQuestionId();
-                voMap.get(questionId).getTags().add(tagMap.get(tagId));
+            List<Integer> tagIds = questionTagMap.get(vo.getQuestionId());
+            if(tagIds != null) {
+                List<Tag> list = new ArrayList<>(tagIds.size());
+                for (Integer id : tagIds) {
+                    list.add(tagMap.get(id));
+                }
+                vo.setTags(list);
             }
         }
     }

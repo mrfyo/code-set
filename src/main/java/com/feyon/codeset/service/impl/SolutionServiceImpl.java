@@ -16,6 +16,7 @@ import com.feyon.codeset.util.PageUtils;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.SolutionDetailVO;
 import com.feyon.codeset.vo.SolutionVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * @author Feng Yong
  */
 @Service
+@RequiredArgsConstructor
 public class SolutionServiceImpl implements SolutionService {
 
     private final static int SUMMARY_MAX_SIZE = 64;
@@ -41,16 +43,6 @@ public class SolutionServiceImpl implements SolutionService {
     private final SolutionDetailMapper solutionDetailMapper;
 
     private final TagMapper tagMapper;
-
-    public SolutionServiceImpl(SolutionMapper solutionMapper,
-                               SolutionTagMapper solutionTagMapper,
-                               SolutionDetailMapper solutionDetailMapper,
-                               TagMapper tagMapper) {
-        this.solutionMapper = solutionMapper;
-        this.solutionTagMapper = solutionTagMapper;
-        this.solutionDetailMapper = solutionDetailMapper;
-        this.tagMapper = tagMapper;
-    }
 
 
     @Override

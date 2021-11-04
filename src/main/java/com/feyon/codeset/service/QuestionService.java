@@ -1,12 +1,10 @@
 package com.feyon.codeset.service;
 
-import com.feyon.codeset.entity.Question;
 import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.vo.PageVO;
 import com.feyon.codeset.vo.QuestionVO;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -29,13 +27,13 @@ public interface QuestionService {
         }
     }
 
-    interface QuestionWorker extends Consumer<List<QuestionVO>> {
+    interface QuestionWorker extends Consumer<QuestionVO> {
         /**
          * worker builder
          *
          * @return identity worker.
          */
-        static Consumer<List<QuestionVO>> build() {
+        static Consumer<QuestionVO> build() {
             return questionVO -> {
             };
         }
