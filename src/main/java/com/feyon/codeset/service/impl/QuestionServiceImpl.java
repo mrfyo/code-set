@@ -186,7 +186,7 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         Consumer<QuestionVO> workers = QuestionWorker.build()
-                .andThen(new QuestionStatusWorker(query))
+                .andThen(new QuestionStatusWorker())
                 .andThen(new QuestionStatisticWorker(questionIds))
                 .andThen(new QuestionTagWorker(questionIds));
 
@@ -277,17 +277,11 @@ public class QuestionServiceImpl implements QuestionService {
      */
     private class QuestionStatusWorker implements QuestionWorker {
 
-        private final QuestionQuery query;
-
         private Map<Integer, Integer> questionStatusMap;
-
-        public QuestionStatusWorker(QuestionQuery query) {
-            this.query = query;
-        }
 
         @Override
         public void accept(QuestionVO vo) {
-            Integer status = ObjectUtils.isEmpty(query.getStatus()) ? findStatus(vo.getQuestionId()) : query.getStatus();
+            Integer status = findStatus(vo.getQuestionId());
             vo.setStatus(status);
         }
 

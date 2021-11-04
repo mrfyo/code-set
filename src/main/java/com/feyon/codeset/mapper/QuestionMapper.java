@@ -31,4 +31,5 @@ public interface QuestionMapper extends BaseMapper<Question> {
     List<Question> listAllByPage(Pageable pageable);
 
     List<UserQuestion> listAllForUser(@Param("userId") Integer userId, @Param("status") @Nullable Integer status);
+
 }
