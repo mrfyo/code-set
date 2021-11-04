@@ -15,6 +15,7 @@ import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
 import com.feyon.codeset.util.PageUtils;
 import com.feyon.codeset.vo.PageVO;
+import com.feyon.codeset.vo.QuestionDetailVO;
 import com.feyon.codeset.vo.QuestionVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -127,6 +128,22 @@ public class QuestionServiceImpl implements QuestionService {
         questionDetailService.removeById(questionId);
     }
 
+    @Override
+    public QuestionDetailVO findOne(Integer questionId) {
+        Question question = findById(questionId);
+        QuestionDetailVO vo = ModelMapperUtil.map(question, QuestionDetailVO.class);
+
+        QuestionDetail detail = questionDetailService.getById(questionId);
+        vo.setQuestionContent(detail.getContent());
+
+        List<Integer> questionIds = List.of(questionId);
+        Consumer<QuestionVO> workers = QuestionWorker.build()
+                .andThen(new QuestionStatisticWorker(questionIds))
+                .andThen(new QuestionTagWorker(questionIds));
+
+        workers.accept(vo);
+        return vo;
+    }
 
     public Question findById(Integer id) {
         return questionMapper.findById(id).orElseThrow(() -> new EntityException("题目不存在"));
@@ -287,7 +304,8 @@ public class QuestionServiceImpl implements QuestionService {
             for (QuestionStatistic stat : statistics) {
                 if (stat.getId().equals(vo.getQuestionId())) {
                     vo.setResolutionNum(stat.getSolution());
-                    vo.setPassRate(stat.getPassRate());
+                    vo.setSuccessSubmission(stat.getSuccessSubmission());
+                    vo.setFailSubmission(stat.getFailSubmission());
                     break;
                 }
             }

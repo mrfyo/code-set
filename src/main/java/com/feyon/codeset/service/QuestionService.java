@@ -3,6 +3,7 @@ package com.feyon.codeset.service;
 import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.vo.PageVO;
+import com.feyon.codeset.vo.QuestionDetailVO;
 import com.feyon.codeset.vo.QuestionVO;
 
 import java.util.function.Consumer;
@@ -68,4 +69,11 @@ public interface QuestionService {
      * @param questionId question's id.
      */
     void remove(Integer questionId);
+
+    /**
+     * return a question detail.
+     * @param questionId question's id
+     * @return a question detail
+     */
+    QuestionDetailVO findOne(Integer questionId);
 }

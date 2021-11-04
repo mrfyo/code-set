@@ -53,8 +53,14 @@ public class QuestionVO {
     private Long resolutionNum;
 
     /**
-     * the passing rate of this question. <br>
-     * Note. this rate is not belong to current user but all users.
+     * the number of successful submissions. <br>
+     * Note. this number is not belong to current user but all users.
      */
-    private Double passRate;
+    private Long successSubmission;
+
+    /**
+     * the number of failure submissions. <br>
+     * Note. this number is not belong to current user but all users.
+     */
+    private Long failSubmission;
 }

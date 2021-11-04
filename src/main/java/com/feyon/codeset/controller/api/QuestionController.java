@@ -5,6 +5,7 @@ import com.feyon.codeset.form.QuestionForm;
 import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.vo.PageVO;
+import com.feyon.codeset.vo.QuestionDetailVO;
 import com.feyon.codeset.vo.QuestionVO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,13 @@ public class QuestionController implements QuestionApi {
         return Result.success();
     }
 
+    @GetMapping("/{questionId}")
+    public QuestionDetailVO queryQuestion(@PathVariable Integer questionId) {
+        return questionService.findOne(questionId);
+    }
+
     @GetMapping
-    public PageVO<QuestionVO> queryQuestion(@Valid QuestionQuery urlQuery, @Valid @RequestBody(required = false) QuestionQuery query) {
+    public PageVO<QuestionVO> listQuestions(@Valid QuestionQuery urlQuery, @Valid @RequestBody(required = false) QuestionQuery query) {
         return questionService.listAll(query == null ? urlQuery : query);
     }
 }
