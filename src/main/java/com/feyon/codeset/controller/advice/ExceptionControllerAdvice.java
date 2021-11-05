@@ -3,6 +3,7 @@ package com.feyon.codeset.controller.advice;
 import com.feyon.codeset.controller.result.Result;
 import com.feyon.codeset.constants.ResultCode;
 import com.feyon.codeset.controller.result.ValidationFailResult;
+import com.feyon.codeset.exception.CodeSetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
@@ -72,6 +73,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ServletException.class)
     Result onServletException(ServletException e) {
         return Result.fail(ResultCode.SERVLET_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(CodeSetException.class)
+    Result onCodeSetException(CodeSetException e) {
+        return Result.fail(ResultCode.BUSINESS_ERROR, e.getMessage());
     }
 
     /**

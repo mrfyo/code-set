@@ -5,6 +5,7 @@ import com.feyon.codeset.common.Pageable;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
 
@@ -12,7 +13,6 @@ import java.util.List;
  * @author Feng Yong
  */
 @Data
-
 public class QuestionQuery implements Pageable {
     /**
      * page of table that start from <b>1</b>
@@ -23,19 +23,24 @@ public class QuestionQuery implements Pageable {
     /**
      * size of table
      */
-    @Range(min = 0, max = 100)
+    @Min(0)
+    @Max(100)
     private Integer size = 20;
 
     /**
      * the difficulty of question.
      * @see com.feyon.codeset.entity.Question
      */
+    @Min(0)
+    @Max(3)
     private Integer difficulty;
 
     /**
      * the status that user solve question.
      * @see com.feyon.codeset.entity.UserQuestion
      */
+    @Min(0)
+    @Max(2)
     private Integer status;
 
     /**

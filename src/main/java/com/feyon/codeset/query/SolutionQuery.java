@@ -3,6 +3,8 @@ package com.feyon.codeset.query;
 import com.feyon.codeset.common.Pageable;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -15,11 +17,14 @@ public class SolutionQuery implements Pageable {
     /**
      * page of table that start from <b>1</b>
      */
+    @Min(1)
     private Integer page = 1;
 
     /**
      * size of table
      */
+    @Min(0)
+    @Max(100)
     private Integer size = 10;
 
     /**

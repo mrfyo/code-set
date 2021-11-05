@@ -11,4 +11,6 @@ public interface ResultCode {
     int SYSTEM_ERROR = 2;
 
     int SERVLET_ERROR = 3;
+
+    int BUSINESS_ERROR = 4;
 }
