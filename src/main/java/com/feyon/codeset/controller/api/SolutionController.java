@@ -44,12 +44,12 @@ public class SolutionController implements SolutionApi{
     }
 
     @GetMapping("/{solutionId}")
-    public SolutionDetailVO queryOne(@PathVariable Integer solutionId) {
+    public SolutionDetailVO querySolution(@PathVariable Integer solutionId) {
         return questionService.findOne(solutionId);
     }
 
     @GetMapping
-    public PageVO<SolutionVO> querySolutionList(@Valid SolutionQuery urlQuery, @Valid @RequestBody(required = false) SolutionQuery query) {
+    public PageVO<SolutionVO> listSolutions(@Valid SolutionQuery urlQuery, @Valid @RequestBody(required = false) SolutionQuery query) {
         return questionService.listAll(query == null ? urlQuery : query);
     }
 

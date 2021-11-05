@@ -1,5 +1,6 @@
 package com.feyon.codeset.query;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.feyon.codeset.common.Pageable;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author Feng Yong
  */
 @Data
+
 public class QuestionQuery implements Pageable {
     /**
      * page of table that start from <b>1</b>

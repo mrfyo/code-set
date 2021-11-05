@@ -1,5 +1,6 @@
 package com.feyon.codeset.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.lang.Nullable;
 
 /**
@@ -32,6 +33,7 @@ public interface Pageable {
      *
      * @return the offset in table.
      */
+    @JsonIgnore
     default int getOffset() {
         Integer page = getPage();
         Integer size = getSize();
@@ -43,6 +45,7 @@ public interface Pageable {
      *
      * @return the limit in table according the size.
      */
+    @JsonIgnore
     default int getLimit() {
         Integer size = getSize();
         return size == null ? 0 : size;
