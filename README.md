@@ -18,6 +18,12 @@
 - Springboot
 - Mybatis
 
+### 工具
+- [PM2](https://github.com/Unitech/pm2) 进程管理工具
+- [requests](https://github.com/psf/requests) 简单易用的 HTTP 库
+- [mycli](https://github.com/dbcli/mycli) 带有自动补全和语法高亮的 MYSQL 命令行客户端 
+- [redoc](https://github.com/Redocly/redoc) 漂亮的接口文档工具
+
 ### 开发环境
 
 - JDK-11
