@@ -21,7 +21,7 @@ class SubmissionMapperTest {
 
     @Test
     void insert() {
-        var submission = new Submission();
+        Submission submission = new Submission();
         submission.setResult(1);
         submission.setQuestionId(1);
         submission.setUserId(1);
@@ -34,7 +34,7 @@ class SubmissionMapperTest {
 
     @Test
     void update() {
-        var submission = mapper.findById(1).orElse(null);
+        Submission submission = mapper.findById(1).orElse(null);
         assertNotNull(submission);
         submission.setResult(1);
         submission.setQuestionId(2);
@@ -52,7 +52,7 @@ class SubmissionMapperTest {
 
     @Test
     void findById() {
-        var submission = mapper.findById(1).orElse(null);
+        Submission submission = mapper.findById(1).orElse(null);
         System.out.println(submission);
         assertNotNull(submission);
         assertEquals(1, submission.getResult());

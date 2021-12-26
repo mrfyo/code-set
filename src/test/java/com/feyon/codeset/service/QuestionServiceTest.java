@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +23,7 @@ class QuestionServiceTest {
 
     @Test
     void listAll() {
-        var query = new QuestionQuery();
+        QuestionQuery query = new QuestionQuery();
         query.setStatus(1);
         query.setPage(1);
         query.setSize(10);
@@ -30,7 +32,7 @@ class QuestionServiceTest {
 
     @Test
     void findOne() {
-        QuestionDetailVO vo = questionService.findOne(1);
+        QuestionDetailVO vo = questionService.findOne(75);
         System.out.println(vo);
     }
 
@@ -39,13 +41,13 @@ class QuestionServiceTest {
         QuestionForm form = new QuestionForm();
         form.setTitle("盛最多水的容器");
         form.setDifficulty(2);
-        form.setTagIdList(List.of(6));
+        form.setTagIdList(Collections.singletonList(6));
         questionService.save(form);
     }
 
     @Test
     void remove() {
-        questionService.remove(23);
+        questionService.remove(75);
     }
 
     @Test
@@ -53,7 +55,7 @@ class QuestionServiceTest {
         QuestionForm form = new QuestionForm();
         form.setTitle("两数之和");
         form.setDifficulty(1);
-        form.setTagIdList(List.of(6, 7));
-        questionService.update(1, form);
+        form.setTagIdList(Arrays.asList(6, 7));
+        questionService.update(75, form);
     }
 }

@@ -121,7 +121,7 @@ public class SolutionServiceImpl implements SolutionService {
 
         SolutionDetailVO vo = ModelMapperUtil.map(solution, SolutionDetailVO.class);
         vo.setSolutionContent(detail.getContent());
-        List<Integer> solutionIds = List.of(solutionId);
+        List<Integer> solutionIds = Collections.singletonList(solutionId);
         new SolutionTagWorker(solutionIds)
                 .andThen(new SolutionLikeWorker(solutionIds))
                 .accept(vo);

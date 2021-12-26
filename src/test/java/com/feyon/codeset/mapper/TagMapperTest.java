@@ -27,7 +27,7 @@ class TagMapperTest {
 
     @Test
     void update() {
-        var user = mapper.findById(1).orElse(null);
+        Tag user = mapper.findById(1).orElse(null);
         assertNotNull(user);
         user.setName("双向链表");
         assertEquals(1, mapper.update(user));
@@ -40,7 +40,7 @@ class TagMapperTest {
 
     @Test
     void findById() {
-        var role = mapper.findById(1).orElse(null);
+        Tag role = mapper.findById(1).orElse(null);
         assertNotNull(role);
         assertEquals(1, role.getId());
         assertEquals("链表", role.getName());

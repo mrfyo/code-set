@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,8 +21,8 @@ class SolutionServiceTest {
 
     @Test
     void listAll() {
-        var query = new SolutionQuery();
-        query.setTags(List.of(13));
+        SolutionQuery query = new SolutionQuery();
+        query.setTags(Collections.singletonList(13));
         solutionService.listAll(query).forEach(System.out::println);
     }
 
@@ -32,7 +33,7 @@ class SolutionServiceTest {
         form.setQuestionId(1);
         form.setTitle("暴力解法");
         form.setContent("暴力解法，解题思路如下");
-        form.setTagIds(List.of(17));
+        form.setTagIds(Collections.singletonList(17));
 
         solutionService.save(form);
     }
@@ -43,7 +44,7 @@ class SolutionServiceTest {
         form.setQuestionId(1);
         form.setTitle("画解算法：1. 两数之和");
         form.setContent("画解算法：1. 两数之和 解题思路如下");
-        form.setTagIds(List.of(17));
+        form.setTagIds(Collections.singletonList(17));
         solutionService.update(2, form);
     }
 

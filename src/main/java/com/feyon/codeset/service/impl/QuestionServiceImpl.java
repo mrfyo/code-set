@@ -138,7 +138,7 @@ public class QuestionServiceImpl implements QuestionService {
         QuestionDetail detail = questionDetailService.getById(questionId);
         vo.setQuestionContent(detail.getContent());
 
-        List<Integer> questionIds = List.of(questionId);
+        List<Integer> questionIds = Collections.singletonList(questionId);
         QuestionWorker.build()
                 .andThen(new QuestionStatisticWorker(questionIds))
                 .andThen(new QuestionTagWorker(questionIds))
@@ -183,7 +183,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<Integer> neededIds = PageUtils.selectPage(questionIds, query);
 
         if (neededIds.isEmpty()) {
-            return PageVO.of(total, List.of());
+            return PageVO.of(total, new ArrayList<>());
         }
 
         Consumer<QuestionVO> workers = QuestionWorker.build()
@@ -403,7 +403,7 @@ public class QuestionServiceImpl implements QuestionService {
                 }
                 vo.setTags(list);
             } else {
-                vo.setTags(List.of());
+                vo.setTags(new ArrayList<>(0));
             }
         }
     }
@@ -422,7 +422,7 @@ public class QuestionServiceImpl implements QuestionService {
         @Override
         public void accept(QuestionDetailVO vo) {
             Integer userId = UserContext.getUserId();
-            List<QuestionLike> list = questionLikeMapper.findAllByQuestionId(List.of(questionId));
+            List<QuestionLike> list = questionLikeMapper.findAllByQuestionId(Collections.singletonList(questionId));
             vo.setLikeNum(list.size());
             vo.setLiked(false);
             for (QuestionLike like : list) {

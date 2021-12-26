@@ -63,7 +63,7 @@ public interface Pageable {
     }
 
 
-    public class DefaultPageable implements Pageable {
+    class DefaultPageable implements Pageable {
         private final Integer page;
 
         private final Integer size;

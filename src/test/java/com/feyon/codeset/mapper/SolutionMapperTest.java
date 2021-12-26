@@ -27,6 +27,7 @@ class SolutionMapperTest {
         solution.setQuestionId(1);
         solution.setUserId(1);
         solution.setCreateAt(LocalDateTime.now());
+        solution.setSummary("两数之和呗");
         assertEquals(1, mapper.insert(solution));
     }
 
@@ -48,7 +49,7 @@ class SolutionMapperTest {
         Solution solution = mapper.findById(1).orElse(null);
         assertNotNull(solution);
         assertEquals(1, solution.getId());
-        assertEquals("暴力解法--两数之和", solution.getTitle());
+        assertEquals("小白 Python 几种解法", solution.getTitle());
         assertNotNull(solution.getCreateAt());
         assertEquals(2021, solution.getCreateAt().getYear());
     }

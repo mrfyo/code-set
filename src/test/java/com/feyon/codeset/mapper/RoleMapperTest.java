@@ -27,7 +27,7 @@ class RoleMapperTest {
 
     @Test
     void update() {
-        var role = mapper.findById(1).orElse(null);
+        Role role = mapper.findById(1).orElse(null);
         assertNotNull(role);
         assertEquals(1, mapper.update(role));
     }
@@ -39,7 +39,7 @@ class RoleMapperTest {
 
     @Test
     void findById() {
-        var role = mapper.findById(1).orElse(null);
+        Role role = mapper.findById(1).orElse(null);
         assertNotNull(role);
         assertEquals(1, role.getId());
         assertEquals("admin", role.getName());

@@ -19,7 +19,7 @@ class SubmissionContentMapperTest {
 
     @Test
     void insert() {
-        var submission = new SubmissionDetail();
+        SubmissionDetail submission = new SubmissionDetail();
         submission.setSubmissionId(1);
         submission.setContent("PASS");
         assertEquals(1, mapper.insert(submission));
@@ -27,7 +27,7 @@ class SubmissionContentMapperTest {
 
     @Test
     void update() {
-        var submission = mapper.findById(1).orElse(null);
+        SubmissionDetail submission = mapper.findById(1).orElse(null);
         assertNotNull(submission);
         submission.setContent("SUCCESS");
         assertEquals(1, mapper.update(submission));
@@ -40,7 +40,7 @@ class SubmissionContentMapperTest {
 
     @Test
     void findById() {
-        var submission = mapper.findById(1).orElse(null);
+        SubmissionDetail submission = mapper.findById(1).orElse(null);
         System.out.println(submission);
         assertNotNull(submission);
         assertEquals("PASS", submission.getContent());

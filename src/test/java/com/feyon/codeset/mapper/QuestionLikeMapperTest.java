@@ -1,7 +1,6 @@
 package com.feyon.codeset.mapper;
 
 import com.feyon.codeset.entity.QuestionLike;
-import com.feyon.codeset.entity.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +27,7 @@ class QuestionLikeMapperTest {
 
     @Test
     void update() {
-        var entity = mapper.findById(1).orElse(null);
+        QuestionLike entity = mapper.findById(75).orElse(null);
         assertNotNull(entity);
         entity.setQuestionId(2);
         assertEquals(1, mapper.update(entity));
@@ -36,16 +35,16 @@ class QuestionLikeMapperTest {
 
     @Test
     void deleteById() {
-        assertEquals(1, mapper.deleteById(1));
+        assertEquals(1, mapper.deleteById(75));
     }
 
     @Test
     void findById() {
-        var role = mapper.findById(1).orElse(null);
-        assertNotNull(role);
-        assertEquals(1, role.getId());
-        assertEquals(1, role.getUserId());
-        assertEquals(1, role.getQuestionId());
+        QuestionLike entity = mapper.findById(1).orElse(null);
+        assertNotNull(entity);
+        assertEquals(1, entity.getId());
+        assertEquals(1, entity.getUserId());
+        assertEquals(1, entity.getQuestionId());
     }
 
     @Test

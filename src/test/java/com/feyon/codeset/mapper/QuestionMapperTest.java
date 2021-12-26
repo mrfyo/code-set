@@ -31,18 +31,18 @@ class QuestionMapperTest {
     void update() {
         Question question = mapper.findById(1).orElse(null);
         assertNotNull(question);
-        question.setDifficulty(3);
+        question.setDifficulty(75);
         assertEquals(1, mapper.update(question));
     }
 
     @Test
     void deleteById() {
-        assertEquals(1, mapper.deleteById(3));
+        assertEquals(1, mapper.deleteById(75));
     }
 
     @Test
     void findById() {
-        Question question = mapper.findById(1).orElse(null);
+        Question question = mapper.findById(75).orElse(null);
         assertNotNull(question);
         assertEquals(1, question.getId());
         assertEquals("两数之和", question.getTitle());

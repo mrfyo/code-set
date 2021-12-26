@@ -26,7 +26,7 @@ class SubmissionLanguageMapperTest {
 
     @Test
     void update() {
-        var lang = mapper.findById(1).orElse(null);
+        SubmissionLanguage lang = mapper.findById(1).orElse(null);
         assertNotNull(lang);
         lang.setName("C");
         assertEquals(1, mapper.update(lang));
@@ -39,7 +39,7 @@ class SubmissionLanguageMapperTest {
 
     @Test
     void findById() {
-        var lang = mapper.findById(1).orElse(null);
+        SubmissionLanguage lang = mapper.findById(1).orElse(null);
         assertNotNull(lang);
         assertEquals(1, lang.getId());
         assertEquals("C++", lang.getName());
