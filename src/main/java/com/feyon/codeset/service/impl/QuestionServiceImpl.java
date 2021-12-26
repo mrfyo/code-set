@@ -10,6 +10,7 @@ import com.feyon.codeset.query.QuestionQuery;
 import com.feyon.codeset.service.QuestionDetailService;
 import com.feyon.codeset.service.QuestionService;
 import com.feyon.codeset.util.ModelMapperUtil;
+import com.feyon.codeset.util.NullUtil;
 import com.feyon.codeset.util.PageUtils;
 import com.feyon.codeset.util.UserContext;
 import com.feyon.codeset.vo.PageVO;
@@ -116,7 +117,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         QuestionDetail detail = new QuestionDetail();
         detail.setId(questionId);
-        detail.setContent(form.getContent());
+        detail.setContent(NullUtil.defaultValue(form.getContent(), ""));
         questionDetailService.updateById(detail);
     }
 

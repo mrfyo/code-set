@@ -20,10 +20,7 @@
 
     <update id="update" parameterType="com.feyon.codeset.entity.QuestionDetail">
         update `question_detail`
-        set
-        <if test="content != null">
-            content = #{content}
-        </if>
+        set content = #{content}
         where id = #{id};
     </update>
 
