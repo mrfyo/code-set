@@ -41,12 +41,11 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final TagMapper tagMapper;
 
-    private final QuestionDetailService questionDetailService;
-
     private final QuestionLikeMapper questionLikeMapper;
 
     private final SubmissionMapper submissionMapper;
 
+    private final QuestionDetailService questionDetailService;
 
     @Override
     @Transactional(rollbackFor = AdminException.class)

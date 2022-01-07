@@ -13,7 +13,7 @@ public class Submission {
     private Integer id;
 
     /**
-     * <b>1</b> means success.
+     * <b>1</b> means success. <br>
      * <b>2</b> means fail.
      */
     private Integer result;
