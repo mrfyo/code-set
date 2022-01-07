@@ -1,5 +1,6 @@
 server:
   port: 8080
+
 spring:
   application:
     name: Coder-Set
@@ -8,6 +9,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/code_set?useSSL=false&characterEncoding=utf-8&serverTimezone=UTC
     username: coder
     password: 123456
+
 mybatis:
   mapper-locations: classpath:mappers/*xml
   type-aliases-package: com.feyon.codeset.entity
@@ -23,3 +25,7 @@ springdoc:
 logging:
   level: info
   level.web: info
+
+
+auth:
+  open: true
